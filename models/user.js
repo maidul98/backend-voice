@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
 var uniqueValidator = require("mongoose-unique-validator");
 
-const validateEmail = function (email) {
-  return /@cornell\.edu$/.test(email);
+var validateEmail = function (email) {
+  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email);
 };
 
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true,
+    unique: [true, "Username is taken, please try a new username"],
   },
   createdAt: {
     type: Date,
@@ -29,7 +30,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: [validateEmail, "Please enter a valid Cornell email"],
-    unique: [true, "Username is taken"],
+    unique: [true, "This email is already in use"],
   },
 });
 

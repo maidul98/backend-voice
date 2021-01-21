@@ -1,16 +1,26 @@
 {
   "info": {
-    "title": "API documentation",
+    "title": "jwt-auth",
     "version": "1.0.0",
     "license": {
       "name": "ISC"
     },
-    "description": "A full list of API documentation of all routes and their inputs and example outputs"
+    "description": "[Specification JSON](/api-spec)"
   },
   "paths": {
-    "/users/protected": {
+    "*": {
+      "options": {
+        "summary": "*",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/users/user": {
       "get": {
-        "summary": "/users/protected",
+        "summary": "/users/user",
         "consumes": [
           "application/json"
         ],
@@ -19,40 +29,57 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "string",
-              "example": "secured"
+              "type": "object",
+              "properties": {
+                "verified": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "suspended": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "6009a830d3d378157dcd4320"
+                },
+                "username": {
+                  "type": "string",
+                  "example": "maidul98"
+                },
+                "hash": {
+                  "type": "string",
+                  "example": "75f7a95bf74e5e432bffc5910a980793bc7369f09bb05ae930ea139861fd98256905c42b52ab66a472e97d4c80a97928c20c9edc20e019c8f65a14ef2313cbd1"
+                },
+                "salt": {
+                  "type": "string",
+                  "example": "d8beb4864bb19099b3e21ff1d5f660695080873941e7c4d62f58dcabf8d12e9c"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "maidul98@gmail.com"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "example": "2021-01-21T16:13:36.558Z"
+                },
+                "__v": {
+                  "type": "number",
+                  "example": 0
+                }
+              }
             }
           },
-          "304": {},
           "401": {
             "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "type": "string",
-              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>MongoTimeoutError: Server selection timed out after 30000 ms<br> &nbsp; &nbsp;at Timeout._onTimeout (/Users/maidulislam/Desktop/hackathon/server/node_modules/mongodb/lib/core/sdam/server_selection.js:308:9)<br> &nbsp; &nbsp;at listOnTimeout (internal/timers.js:551:17)<br> &nbsp; &nbsp;at processTimers (internal/timers.js:494:7)</pre>\n</body>\n</html>\n"
-            }
           }
         },
         "produces": [
-          "text/html"
+          "application/json"
         ],
         "security": [
           {
             "authorization": []
-          },
-          {
-            "x-forwarded-host": []
-          },
-          {
-            "x-forwarded-proto": []
-          },
-          {
-            "x-forwarded-port": []
-          },
-          {
-            "x-forwarded-for": []
           }
         ]
       }
@@ -73,7 +100,7 @@
               "properties": {
                 "username": {
                   "type": "string",
-                  "example": "Maidul"
+                  "example": "maidul98"
                 },
                 "password": {
                   "type": "string",
@@ -96,21 +123,37 @@
                 "user": {
                   "type": "object",
                   "properties": {
+                    "verified": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "suspended": {
+                      "type": "boolean",
+                      "example": false
+                    },
                     "_id": {
                       "type": "string",
-                      "example": "5f093552d95fbf10ce7427f6"
+                      "example": "6009a830d3d378157dcd4320"
                     },
                     "username": {
                       "type": "string",
-                      "example": "Maidul"
+                      "example": "maidul98"
                     },
                     "hash": {
                       "type": "string",
-                      "example": "0454306f17e27dc555c071ffd67664a712fb4fbd993dbfdd3711b2a84dc3bf522f5db803a0cafb219405a9dd0daa906a2833f0e77d2f27607a5fa2d3c82b4b57"
+                      "example": "75f7a95bf74e5e432bffc5910a980793bc7369f09bb05ae930ea139861fd98256905c42b52ab66a472e97d4c80a97928c20c9edc20e019c8f65a14ef2313cbd1"
                     },
                     "salt": {
                       "type": "string",
-                      "example": "7987447e112ed5987285350821d60b26d5faa39abc4dc81cbb99fa6096b008f3"
+                      "example": "d8beb4864bb19099b3e21ff1d5f660695080873941e7c4d62f58dcabf8d12e9c"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "maidul98@gmail.com"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2021-01-21T16:13:36.558Z"
                     },
                     "__v": {
                       "type": "number",
@@ -120,7 +163,7 @@
                 },
                 "token": {
                   "type": "string",
-                  "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZjA5MzU1MmQ5NWZiZjEwY2U3NDI3ZjYiLCJpYXQiOjE1OTQ2NDI5ODk1MDAsImV4cCI6MTU5NDY0MzA3NTkwMH0.k1JaCWAirFSxsUwYpC238vnzH7zT9w5YGQg9aeOELYXCnOr6OdN4e8yNdz86is_phnHkaIil8SE4820ekpXi4LdRbtdpbnpJWEqSIOHXnOraVGcd6Jhqti0TTsCW0CSXXPTBUiKxJxkJnsZOe4nO-u6zpYW4T0UTHFUOzT5F-bfz1i7zZZPzjU-N-nDQuVVxM5gc5ZmvvptNizLH2Lq3hqrEpIKo5iqBU9HzgROrlbaTOQJg54LkWqD1jkoik-UJTNwqjQlYDZBnActhJiQ8hZh_KtdTk40oiEkNvS8EThR6CcGuMqb-ajHpOJxMBEfw3EheJIkJdk2dCpgUcRE1zQ6cceKJ7J0SV5D_fcvUObA7QVLx6XthAgucRB6EeOEPW6enmJ_H0chCuGLzQa-zhw9i_AbBAQjJPkgeD3Azsgq_UqGZvYLCIA-VgKc1UVObFjE3kU1fCdtZFBkqCwGJeM0NcPa_pSSyyTVV6oSAxceJV8xUPsI1NQH6R2IP4Z-dMnwLLRP51t4iAELWHVpkJvvvLu1_g_Sffs7YFdkO443EHXQCqv-_d4vZxuSw_URon4QU0iYS6Xy2fLYnnuQ9cYNrA98uGnlD2NT-IS1-rXs3hEwL_wSDgwRRxag_AedyiH-thz2vpCuA_-4fx46Csnb6b2RGo_8UeLNqQNdHyx4"
+                  "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDA5YTgzMGQzZDM3ODE1N2RjZDQzMjAiLCJpYXQiOjE2MTEyNDY2MDM2NzcsImV4cCI6MTYxMTI0NjY5MDA3N30.JzaT8T4oMrVrQBjdxXROkOFyScVFHWT__7mGhp7BGVmfcKkJG1BpRTKhYgmaFkmX77XmXLmOVaWTumuvJQTw1IAGZeVFXkmtJ9PYi9uXHPp_pTdhMTAFJAa70zVQ4zNX7ZIUeLcHdPCWOmVFrxHULqPZ1FMA3MTctxg9gimcS-HuwCZ2URs7NTZivsm12qWZtfkw15pVNcQzUXet3TiICMcpHRmQCjGwAq4lPTpfUREMShJNOrDczAtOwc5Y0QyfuwCfZPBHCduqJL0hDjFUF6TONuOb-T3P-yJKy-qaSMvjOItf_YPxjWkvaVyJ_ORtcqIvjQy8MfBtdlAib35HaUZPm5BSdlP8g2sqVkRUHN5mJZdNlJchTyKMryUqvpPnwbYJ5QUsIxlseOUYJxlHlJX4uq5kmSnNDwRpk4c3YEMSI9fdKRlulYIyUuBvTi4gVIPI54DPXZwgS-ZkKSdMJJ5drASfUqxCCNIYGhBAAgiVZFYGrGJRDDa7LTDT6IXIEPGh0p-ubL-vEghjLK7p73X2it-rfenqVEu07A_ltEwAHccnwYjTDcj7FQc5K2NqpmMk_vNSQAxbzLS_X0q93s4f0vHThZysWSPhcRBSkTWLlt3ZhZuMG7NVG4ct4Mg2EKMbPUWraPA8TKh0zhoIfj0LNLGeUWUW93rq8NxVm2Y"
                 },
                 "expiresIn": {
                   "type": "string",
@@ -144,32 +187,10 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "type": "string",
-              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>MongoTimeoutError: Server selection timed out after 30000 ms<br> &nbsp; &nbsp;at Timeout._onTimeout (/Users/maidulislam/Desktop/hackathon/server/node_modules/mongodb/lib/core/sdam/server_selection.js:308:9)<br> &nbsp; &nbsp;at listOnTimeout (internal/timers.js:551:17)<br> &nbsp; &nbsp;at processTimers (internal/timers.js:494:7)</pre>\n</body>\n</html>\n"
-            }
           }
         },
         "produces": [
-          "application/json",
-          "text/html"
-        ],
-        "security": [
-          {
-            "x-forwarded-host": []
-          },
-          {
-            "x-forwarded-proto": []
-          },
-          {
-            "x-forwarded-port": []
-          },
-          {
-            "x-forwarded-for": []
-          }
+          "application/json"
         ]
       }
     },
@@ -189,11 +210,15 @@
               "properties": {
                 "username": {
                   "type": "string",
-                  "example": "Maidul9898"
+                  "example": "tony"
                 },
                 "password": {
                   "type": "string",
                   "example": "******"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "tony@gmail.com"
                 }
               }
             }
@@ -212,21 +237,37 @@
                 "user": {
                   "type": "object",
                   "properties": {
+                    "verified": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "suspended": {
+                      "type": "boolean",
+                      "example": false
+                    },
                     "_id": {
                       "type": "string",
-                      "example": "5f0c52cb6d00c6041448a839"
+                      "example": "6009ac6ec5bc80172abd8014"
                     },
                     "username": {
                       "type": "string",
-                      "example": "Maidul9898"
+                      "example": "tony"
                     },
                     "hash": {
                       "type": "string",
-                      "example": "a5870762468cf549e022981746eeecc34970607f6ea54dc65cf9dec2beca44f400dc0749dc08eb54c0a1e9cc21e32109c8a89bd54eba22ecacc97111df671529"
+                      "example": "5460a133fca8da57f2a958d6734e025bc589d659fcd2bfc5ec3d3961b7d54e4435d52b1dd13865d185b54af4dbc0c14df3d1d1df4c90d6ffe48604142d7c17b3"
                     },
                     "salt": {
                       "type": "string",
-                      "example": "c0543107e89de0ec0d49412b1a78612faf362ebf15b24802a519de1f0732cbc1"
+                      "example": "672d62fb75cafe9c3ace2e0e1e9c9ff1f7e6ec711734189f250b97bce98561cb"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "tony@gmail.com"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2021-01-21T16:31:42.591Z"
                     },
                     "__v": {
                       "type": "number",
@@ -236,7 +277,7 @@
                 },
                 "token": {
                   "type": "string",
-                  "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZjBjNTJjYjZkMDBjNjA0MTQ0OGE4MzkiLCJpYXQiOjE1OTQ2NDMxNDc1NjUsImV4cCI6MTU5NDY0MzIzMzk2NX0.fA0jUHax20WaI-IzhgmVUQA3QUYgjDEjXfORHZ1Ls2vrjYX7__1aNe-f-m6G98uUwtE4S_4AwsSLJU0bqceVvAL5GQyai3lSK2zyJ9an7PmM5BOknWXen7Jzb9VrL2sbF7fHedM6wnI-8MDJySAM_7mjc72GoU1PNRNLSvQH8kk5DOApV09xfSf2MZODUjzkL5AoK30C7iz5TwXWGVOrbR3nfIwUELMuN0ICHjRo31czwvIlGw-zzesUMeuJiaKD9407B42Ldb1GyFNuIGGWPVYBdIoFi8lRv_sdkmGA7yX841LY8vBkPe2kFqpDt_mOi2qqiUXmwJksvO94QAtECTt9qTRSlqwblfDcffXpcbU07BPYUFqUeKUGVF_SF-GcMTloXZuCHcTh-jBaAGxKGnjTqv90mSYV_QyppLk_Yu-T6XlD4XsXDXz1mtUxBOjP81eIH82leHsOPfIsxJ49G3ZkOXYK8Daqc0hGCFtOoawjp5i_U84yXys58YMLtwSTq307q2fww9o3Ku9Hz6vQonmUtW4XFdw7NEWsCKTw70psha11Qy2W4Bi8fIav7ZZ8T2qJ7rT_D6LtmiW3iFTgt080SN10OHxo7dGQRV-j6PRW-JxwQ9HB_hTHCyR8yBpktBu4yqxc8zShWc-gWHXLKIAFNDyrlVmHGWdKyPYBpv0"
+                  "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDA5YWM2ZWM1YmM4MDE3MmFiZDgwMTQiLCJpYXQiOjE2MTEyNDY3MDI4NjEsImV4cCI6MTYxMTI0Njc4OTI2MX0.y2_mPpJ9XgphslKHRqDXYI-Ll9eFrKDpmGmLFmgyYFPXStqNhtd7Y-gOPIHPrhkeDaq7CSCxiUy16oGuSHeD8Ec6pcRz2BOOnqmeuws5N3LLW2rUGVEBmibTx6W2v6f4AOKqO_nHf76fxGsyjV-pxAaaZm9a20WNmmnU-SzGUJz5Y63niyQyljhJLfsHZ6DSEEq9j68KhBLidgYz4vTdWLcaRYiKeWBuQsjucD5D5mdpIIhrTCBJ1nqw-EXLhfblMC5-Yi60VR_4De1x203HnJZldu5tQUZhFeBe520Nigi7DtC0rx8AZ-CuQtazcu7MkD97TS6UgGtIUwdQwvk_qVpDYThvMDULpSXidqJ95QlxQ9zRMHBERzAa6wzA5Htfx9ac-FoNsBPEzEtIv1w766Z4sZpAkXKLDxSs4XQDolobTkB7EljHS1bRFSCrKHPzbq-EgsdzoKpQSToppg9c4nwFaR-zdTNDVxfMRzl7rSM43Rhg-VQ-4DviWwDmst7Y-lncsr-yzXyC_b9n9IBBP2Rg6jF5W0Hva-rcRoj7PZ8ZDjG_BiEnPMmWMzWryIpxZEJV-NQG6cOGqXwW-2uc7cHPeWiWJGK4cybQQvQuzV41KLs1mluZqkcF1N84JZUf59C39FL9vt2uQ3ZmXQGLm9pIiLJWHlF2uoNuUOm9Jco"
                 },
                 "expiresIn": {
                   "type": "string",
@@ -244,25 +285,145 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "string",
+              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>SyntaxError: Unexpected token } in JSON at position 42<br> &nbsp; &nbsp;at JSON.parse (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at parse (/Users/maidulislam/Desktop/backend-voice/node_modules/body-parser/lib/types/json.js:89:19)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/body-parser/lib/read.js:121:18<br> &nbsp; &nbsp;at invokeCallback (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:224:16)<br> &nbsp; &nbsp;at done (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:213:7)<br> &nbsp; &nbsp;at IncomingMessage.onEnd (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:273:7)<br> &nbsp; &nbsp;at IncomingMessage.emit (events.js:314:20)<br> &nbsp; &nbsp;at endReadableNT (_stream_readable.js:1244:12)<br> &nbsp; &nbsp;at processTicksAndRejections (internal/process/task_queues.js:80:21)</pre>\n</body>\n</html>\n"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "errors": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Path `email` is required."
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "ValidatorError"
+                        },
+                        "properties": {
+                          "type": "object",
+                          "properties": {
+                            "message": {
+                              "type": "string",
+                              "example": "Path `email` is required."
+                            },
+                            "type": {
+                              "type": "string",
+                              "example": "required"
+                            },
+                            "path": {
+                              "type": "string",
+                              "example": "email"
+                            }
+                          }
+                        },
+                        "kind": {
+                          "type": "string",
+                          "example": "required"
+                        },
+                        "path": {
+                          "type": "string",
+                          "example": "email"
+                        }
+                      }
+                    },
+                    "username": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Error, expected `username` to be unique. Value: `tony`"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "ValidatorError"
+                        },
+                        "properties": {
+                          "type": "object",
+                          "properties": {
+                            "message": {
+                              "type": "string",
+                              "example": "Error, expected `username` to be unique. Value: `tony`"
+                            },
+                            "type": {
+                              "type": "string",
+                              "example": "unique"
+                            },
+                            "path": {
+                              "type": "string",
+                              "example": "username"
+                            },
+                            "value": {
+                              "type": "string",
+                              "example": "tony"
+                            }
+                          }
+                        },
+                        "kind": {
+                          "type": "string",
+                          "example": "unique"
+                        },
+                        "path": {
+                          "type": "string",
+                          "example": "username"
+                        },
+                        "value": {
+                          "type": "string",
+                          "example": "tony"
+                        }
+                      }
+                    }
+                  }
+                },
+                "_message": {
+                  "type": "string",
+                  "example": "User validation failed"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "User validation failed: email: Path `email` is required., username: Error, expected `username` to be unique. Value: `tony`"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "ValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "string",
+              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>TypeError [ERR_INVALID_ARG_TYPE]: The &quot;password&quot; argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined<br> &nbsp; &nbsp;at check (internal/crypto/pbkdf2.js:58:14)<br> &nbsp; &nbsp;at Object.pbkdf2Sync (internal/crypto/pbkdf2.js:46:5)<br> &nbsp; &nbsp;at Object.genPassword (/Users/maidulislam/Desktop/backend-voice/lib/utils.js:36:26)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/routes/users.js:53:26<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at next (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/route.js:137:13)<br> &nbsp; &nbsp;at Route.dispatch (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/route.js:112:3)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:281:22<br> &nbsp; &nbsp;at Function.process_params (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:335:12)<br> &nbsp; &nbsp;at next (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:275:10)<br> &nbsp; &nbsp;at Function.handle (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:174:3)<br> &nbsp; &nbsp;at router (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:47:12)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at trim_prefix (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:317:13)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:284:7</pre>\n</body>\n</html>\n"
+            }
           }
         },
         "produces": [
+          "application/json",
+          "text/html"
+        ]
+      }
+    },
+    "/users/forgot": {
+      "post": {
+        "summary": "/users/forgot",
+        "consumes": [
           "application/json"
         ],
-        "security": [
-          {
-            "x-forwarded-host": []
-          },
-          {
-            "x-forwarded-proto": []
-          },
-          {
-            "x-forwarded-port": []
-          },
-          {
-            "x-forwarded-for": []
-          }
-        ]
+        "parameters": [],
+        "responses": {}
       }
     }
   },
@@ -274,26 +435,6 @@
   "securityDefinitions": {
     "authorization": {
       "name": "authorization",
-      "in": "header",
-      "type": "apiKey"
-    },
-    "x-forwarded-host": {
-      "name": "x-forwarded-host",
-      "in": "header",
-      "type": "apiKey"
-    },
-    "x-forwarded-proto": {
-      "name": "x-forwarded-proto",
-      "in": "header",
-      "type": "apiKey"
-    },
-    "x-forwarded-port": {
-      "name": "x-forwarded-port",
-      "in": "header",
-      "type": "apiKey"
-    },
-    "x-forwarded-for": {
-      "name": "x-forwarded-for",
       "in": "header",
       "type": "apiKey"
     }

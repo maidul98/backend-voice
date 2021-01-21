@@ -55,8 +55,8 @@ require("./config/database");
 
 // loading the models
 require("./models/user");
-require("./models/Post");
-require("./models/Comment");
+// require("./models/Post");
+// require("./models/Comment");
 
 // Passing the global passport object into the configuration function
 require("./config/passport")(passport);
@@ -79,10 +79,6 @@ app.use(require("./routes"));
 
 // OAS
 expressOasGenerator.handleRequests();
-
-// Save all classes from roster for every subject into DB
-const mongoose = require("mongoose");
-const Class = mongoose.model("Class");
 
 /**
  * Serve react app

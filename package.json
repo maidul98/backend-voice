@@ -1,0 +1,36 @@
+{
+  "name": "jwt-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon  --ignore 'documentation/*' app.js",
+    "start": "node app.js",
+    "build": "cd client && npm run build",
+    "install-client": "cd client && npm install",
+    "gen-keys": "node generateKeypair.js",
+    "heroku-postbuild": "npm run install-client && npm run build && npm run gen-keys"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.0",
+    "axios": "^0.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-oas-generator": "^1.0.24",
+    "mkdirp": "^1.0.4",
+    "mongoose": "^5.7.14",
+    "mongoose-unique-validator": "^2.0.3",
+    "nodemailer": "^6.4.11",
+    "nodemon": "^2.0.4",
+    "passport": "^0.4.0",
+    "passport-google-oauth": "^2.0.0",
+    "passport-jwt": "^4.0.0",
+    "socket.io": "^2.3.0",
+    "tslib": "^2.0.0"
+  }
+}

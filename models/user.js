@@ -11,6 +11,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: [true, "Username is taken, please try a new username"],
+    required: [true, "Your username cannot be blank."],
+    minlength: [4, "Username must be at least 2 characters."],
+    maxlength: [20, "Username must be less than 20 characters."],
   },
   createdAt: {
     type: Date,
@@ -28,12 +31,13 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    required: [true, "Your email cannot be blank."],
     validate: [validateEmail, "Please enter a valid Cornell email"],
-    unique: [true, "This email is already in use"],
+    unique: true,
   },
 });
 
-UserSchema.plugin(uniqueValidator), { message: "{PATH} is already in use" };
+UserSchema.plugin(uniqueValidator),
+  { message: "{ message: '{PATH} must be unique' }" };
 
 mongoose.model("User", UserSchema);

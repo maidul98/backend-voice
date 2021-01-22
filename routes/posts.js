@@ -1,10 +1,37 @@
 const mongoose = require("mongoose");
 const router = require("express").Router();
 const axios = require("axios");
-const Post = mongoose.model("Post");
-const Votes = mongoose.model("Vote");
+// const Post = mongoose.model("Post");
+// const Votes = mongoose.model("Vote");
 const passport = require("passport");
 const utils = require("../lib/utils");
+
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const AWS = require("aws-sdk");
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ID,
+  secretAccessKey: process.env.AWS_SECRET,
+});
+
+var upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_VOICE_BUCKET,
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function (req, file, cb) {
+      cb(null, Date.now().toString() + ".mp3");
+    },
+  }),
+});
+
+router.post("/upload", upload.single("photos"), function (req, res, next) {
+  console.log(req.file);
+  res.send("Successfully uploaded");
+});
 
 // /**
 //  * Get post by id

@@ -6,24 +6,7 @@ const passport = require("passport");
 const fs = require("fs");
 const mkdirp = require("mkdirp");
 const axios = require("axios");
-// const socketio = require("socket.io");
-
-/**
- * -------------- GENERAL SETUP ----------------
- */
-
-var whitelist = [];
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-};
-
-require("dotenv").config();
+const AWS = require("aws-sdk");
 
 var app = express();
 
@@ -49,6 +32,23 @@ if (process.env.NODE_ENV !== "production") {
     predefinedSpec: predefinedSpec ? () => predefinedSpec : undefined,
   });
 }
+
+/**
+ * -------------- GENERAL SETUP ----------------
+ */
+
+var whitelist = [];
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
+require("dotenv").config();
 
 // Configuring the database and opening a global connection
 require("./config/database");
@@ -77,9 +77,6 @@ app.options("*", cors());
 // Imports all of the routes from ./routes/index.js
 app.use(require("./routes"));
 
-// OAS
-expressOasGenerator.handleRequests();
-
 /**
  * Serve react app
  */
@@ -95,18 +92,31 @@ if (process.env.NODE_ENV === "production") {
  */
 
 const server = app.listen(process.env.PORT || 3000);
+
 /**
  * -------------- WEB SOCKET ----------------
  */
 
-// const io = socketio.listen(server);
+/**
+ * -------------- AWS -----------------------
+ */
 
-// io.sockets.on("connection", function (socket) {
-//   socket.on("join", (data) => {
-//     console.log(data);
-//   });
-//   socket.on("disconnect", () => {
-//     console.log("gone");
-//   });
-// });
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ID,
+  secretAccessKey: process.env.AWS_SECRET,
+});
+
+const params = {
+  Bucket: process.env.AWS_VOICE_BUCKET,
+  CreateBucketConfiguration: {
+    LocationConstraint: "us-east-2",
+  },
+};
+
+// OAS
+expressOasGenerator.handleRequests();
+
+// s3.createBucket(params, function (err, data) {
+//   if (err) console.log(err, err.stack);
+//   else console.log("Bucket Created Successfully", data.Location);
 // });

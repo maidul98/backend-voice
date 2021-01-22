@@ -32,7 +32,7 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "Your email cannot be blank."],
-    validate: [validateEmail, "Please enter a valid Cornell email"],
+    validate: [validateEmail, "Please enter a valid email"],
     unique: true,
   },
 });

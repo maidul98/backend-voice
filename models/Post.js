@@ -10,11 +10,13 @@ const PostSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  title: {
+  caption: {
     type: String,
-    required: true,
   },
-  body: String,
+  // art_key: {
+  //   type: String,
+  //   // required: true,
+  // },
   votes: {
     type: mongoose.Types.ObjectId,
     ref: "Vote",
@@ -28,9 +30,8 @@ const PostSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  class_id: {
-    type: mongoose.Types.ObjectId,
-    ref: "Class",
+  audio_key: {
+    type: String,
     required: true,
   },
 });

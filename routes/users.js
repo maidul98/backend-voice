@@ -7,9 +7,8 @@ const utils = require("../lib/utils");
 router.get(
   "/user",
   passport.authenticate("jwt", { session: false }),
-  (req, res, next) => {
+  (req, res) => {
     res.send(req.user);
-    next();
   }
 );
 

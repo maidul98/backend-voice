@@ -1,11 +1,112 @@
 {
+  "definitions": {
+    "User": {
+      "title": "User",
+      "required": [
+        "username",
+        "email"
+      ],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "salt": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "suspended": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "_id": {
+          "type": "string"
+        }
+      }
+    },
+    "Post": {
+      "title": "Post",
+      "required": [
+        "user",
+        "audio_key"
+      ],
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "votes": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "comments_count": {
+          "type": "number"
+        },
+        "audio_key": {
+          "type": "string"
+        },
+        "_id": {
+          "type": "string"
+        }
+      }
+    },
+    "Vote": {
+      "title": "Vote",
+      "required": [
+        "post"
+      ],
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "post": {
+          "type": "string"
+        },
+        "upvoters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "downvoters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "voteCounts": {
+          "type": "number"
+        },
+        "_id": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "host": "localhost:3000",
   "info": {
     "title": "jwt-auth",
     "version": "1.0.0",
     "license": {
       "name": "ISC"
     },
-    "description": "[Specification JSON](/api-spec)"
+    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3)."
   },
   "paths": {
     "*": {
@@ -15,7 +116,8 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {}
+        "responses": {},
+        "tags": []
       }
     },
     "/users/user": {
@@ -70,17 +172,13 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          }
+          "401": {}
         },
+        "tags": [
+          "User"
+        ],
         "produces": [
           "application/json"
-        ],
-        "security": [
-          {
-            "authorization": []
-          }
         ]
       }
     },
@@ -163,7 +261,7 @@
                 },
                 "token": {
                   "type": "string",
-                  "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDA5YTgzMGQzZDM3ODE1N2RjZDQzMjAiLCJpYXQiOjE2MTEyOTI4NjY3MDAsImV4cCI6MTYxMTI5Mjk1MzEwMH0.pARywBeM8O9lYa7EjMOXKVuHTKgml_4eiuDtiI_s3KEoUec6sSxaT4_h8zVzJq5siJCgaw11da93Do0DaND_M7Ce5JQWj7KeN-zIWMmifZdNFPax2tT5rKiHND0AsWbJOvRVc3aW2X0dRqSiZML0Nax1YB4DYzH13S61bYCAp5cYgl0-n1gXc-9hWVsKZ_XwwuWHXHW4H9-68hqvIjMWdgmneBUCo5L9fCDVj_YzAe71QJbv7H0A7tIm_mLfHtKK3dXY0z36MAXc37Fk32YmGIzXz1zTmGF8yxEJ4TuUeVDPJHrWDLJ4-UKFA1gRXQFeCH2KrCerfOErtLIXX-CNItIXPgsEsvQgzUpsLZVkNxpfWAfIbn2AQCCkvfu0PsYA4ZawuY460ddrp9kTdaJubBX34U1SG0w1ZRHmi_NbTB1zri4kdMmxBa_oz1jkns12O4e5tHgVHOwdm3q0g4tGN1p_b-tVH8dDpC6UFxSzGK669qhkmh8LvidElvbcslfMjBxa9Gks0iMfvB2AgVAXrz1rHt4Z2hkjYmFdiG8KiyPZmaf1hWzizxZXcym-ryota05L2mU7j5O1NNixjmvqm4rzPIQY-TSFXwjK3zypJFpIfWBpgLe_7EazSvIuLd5HgfMXMM464D7IwBfnrXrTXo-F2-BisWWlzWHzKoe2Lj4"
+                  "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDA5YTgzMGQzZDM3ODE1N2RjZDQzMjAiLCJpYXQiOjE2MTE0Mjg2OTI2OTgsImV4cCI6MTYxMTQyODc3OTA5OH0.NsaLLwwla_veHUfGodKrJs0kDL3RQb76T2K4HgY9I8RvGI-AAMnE71vBfAKil7BoYewTjDEWGdWVznpx5t6DMC_fpc0R8Gg3fPwsxnBtpixP06j_LPTocKiiqFA7nQc5aYiYbf7gHGFIV5PXPd5tySdQxFOlwdAA85KkW7d2WQTNfRwHn_IoDIM5_8XWlWq_WhezpjDVQgjohIL7e2VG-wtPQpg1V-uh-tMcDbQcFFzLadEaUQdjRQ0TtCsN2w0-TVozz-LDYd0tBt82dGJCeIW-IuARvT4flQhgAI432bKD3D4qfXGwnu0PZVtKguV1Rr5-vePXMBiRYhoIrmXM0N-rf4DoBy3O9wFFm3dld8suwC-c5l8Avl8hMRiL3lAWbsO7yIxgS9R6LiCafjl591ZDmE-Fbb096GjiH3YAlZ8ZZOmSPhori3kZaqqCKHgy6nG80zRAKJtr8l78yNt1xFx_8FEsE1c8vtwZtn6mDmi4DRj--on31DUsdg7AQ2xDvk95w-DHWOaOH0g4eQyiYG67jiWPPdIEGMri2q6fztEi8ycNuMPH6SbGurt0C6q9VInnQMhlBDV9x3Xjpe3tFaC1ISBz5bRJuuQGyEpGE-9bifYSN79cqamzXmrkF34hUx36-osQSQ3XKqh4_DciDcZU3a78xOmqA-NHciyLC00"
                 },
                 "expiresIn": {
                   "type": "string",
@@ -171,24 +269,11 @@
                 }
               }
             }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "msg": {
-                  "type": "string",
-                  "example": "You are not registered"
-                }
-              }
-            }
           }
         },
+        "tags": [
+          "User"
+        ],
         "produces": [
           "application/json"
         ]
@@ -210,7 +295,7 @@
               "properties": {
                 "username": {
                   "type": "string",
-                  "example": "maidul"
+                  "example": "theflying"
                 },
                 "password": {
                   "type": "string",
@@ -218,7 +303,7 @@
                 },
                 "email": {
                   "type": "string",
-                  "example": "maidul@gmail.com"
+                  "example": "maidull@gmail.com"
                 }
               }
             }
@@ -247,27 +332,27 @@
                     },
                     "_id": {
                       "type": "string",
-                      "example": "600a60890e9cee3649b6e2c9"
+                      "example": "600c741efac0ae13a2724669"
                     },
                     "username": {
                       "type": "string",
-                      "example": "maidul"
+                      "example": "theflying"
                     },
                     "hash": {
                       "type": "string",
-                      "example": "dc428a20add82782b38f60f067df77598f8c5a0bdd6f4fb952dad40a58e29f29f6a61817a45bd86563d50be17d944118c482f4f017c3e293302ccfd98ff38439"
+                      "example": "41320f909067446f378b0e0d8779013c6b8135efa3f61c1b17db3f7ae292ddd3b300b52921f930c166662400a6de13e4d3e8491f31db20b21816fe3e8c41aa59"
                     },
                     "salt": {
                       "type": "string",
-                      "example": "0b0b4bf42ea246a96ee3a8f27a0074a34fd75a8b78a2d6090d958cf612bd0a86"
+                      "example": "58a261b8517abaf780bf0c376b0341a427a2ff1500ff20da758be1f4545312d2"
                     },
                     "email": {
                       "type": "string",
-                      "example": "maidul@gmail.com"
+                      "example": "maidull@gmail.com"
                     },
                     "createdAt": {
                       "type": "string",
-                      "example": "2021-01-22T05:20:09.964Z"
+                      "example": "2021-01-23T19:08:14.871Z"
                     },
                     "__v": {
                       "type": "number",
@@ -277,20 +362,13 @@
                 },
                 "token": {
                   "type": "string",
-                  "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDBhNjA4OTBlOWNlZTM2NDliNmUyYzkiLCJpYXQiOjE2MTEyOTI4MTAyODQsImV4cCI6MTYxMTI5Mjg5NjY4NH0.RxbR8DnvSVbrTdptWRd3JyuzpUojnCjxCW4XGf00YKEneohV2COchqqw2JPf_vz9gqV_JdbHPj5Hb8IhCa2vDANoq89z3KyJimT8R8PKowoZULxdxqkSk0KbcP8uN3NlsfmePStJdTSrMtR3odOVJnQoVyqmx1QiRu7MhOSqlCP3NQ6tlNXYlMfYFbhFl3JzJf5vHyiYaMQokfG9h4IA8yOZWvmmHrFX-Xsuo6uZXil_DjECQKBV8toOLcRIzjxT9zdgJl9FhrcitPqSELMl_CJWfUREUDqDNmQCdzs1AW9YGED48BlI-E7Hj690BoJ-OE8G9ykExK6eLem4aGeOzBOwIQb3M-dL_XZGvOYPh1Jiml8RzWtN77oKUeCT97qtUYfhU7owsQV_j-cHMd3ak-CY5W00gie7r2QMaNi7DwfsULKdm7ERfxPFIO5FqbSdS2vAVTcUgKDT5lc9TdyrA_uFL2kr6pcTQHb9AmkiW22i1TsHOVhggjm_y-OfI0UjUG9e7m7SfFS3hgus_10x-5OVeQV1AhZ2xib-p1NY5w3739rn9ek5QKahBiuFzbjb0lNcue8WUDEsNkbjUpAMMDCkCZVpy0WNEguPlvXN5GvUXtsaPMRhOQMmbc8qxDVsF6y7JnfVcvD7xT5O7aHdCHqohr7BsUAszhyASIRLlFc"
+                  "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDBjNzQxZWZhYzBhZTEzYTI3MjQ2NjkiLCJpYXQiOjE2MTE0Mjg4OTUwNTYsImV4cCI6MTYxMTQyODk4MTQ1Nn0.ZifM1lenh7zx60ATEc4AimVWv9cx3aX-JNJLsQji2fG6T4nqmyNelzCmtxDBWFyd0saVFxLnhNV0VKa4XM-BUXDxkCoqOOhmklIrufUA2AFVFQMDgKm7ZYpt64kfk8PQPxgRqFlFrgjVdSEmBVaThrni3YZwprmYrnSTG80aVQvrcn32mWM_zBee11hadmJW6zwQ7Yer6Bc5hjU63YyqNegIuZ4v4OIr9bqwlrNAieuYZVzCGF0B8HwCO8p6Zy_osHqwpfk9A8Ftd_9v12tEsWZOh3kLuzDrq8pLmrQ80Ph3uLpeZhhoWYl5DGtE55EA_ed57PMvCi8XanTI2Y96p808Gc5TZaPnspfooLfIZel9vGJ_o4KR3sBgdSakdYzHZ8gorpg22oTLg-9cZgYK3rnVF-8icLfTJ6dZi5M1-fZphNzaIuuj9-x6rUI5bSWsHXkNyn699apOIE2Oz477JfU1NzYd5bMLJAMdUKtDpXjkg4-dccVyLfUr-eGt6P3HzI1oWd5Ew8z1Oqmrvi0sl2a9q5U3ZjkO3H0ymMqxNK5hHcDWCkmzXqf5UpefwoaoGTDCGerIqKvmG0wZZPitI9oy1EilBto7GDO6I1QtHly-gEHMPak31S0fEv5zKhRi5JZL8eZstuJtFwcAY-ItMiC6srtm_0QCKRfjb6ELaz0"
                 },
                 "expiresIn": {
                   "type": "string",
                   "example": "1d"
                 }
               }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "type": "string",
-              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>SyntaxError: Unexpected token } in JSON at position 40<br> &nbsp; &nbsp;at JSON.parse (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at parse (/Users/maidulislam/Desktop/backend-voice/node_modules/body-parser/lib/types/json.js:89:19)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/body-parser/lib/read.js:121:18<br> &nbsp; &nbsp;at invokeCallback (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:224:16)<br> &nbsp; &nbsp;at done (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:213:7)<br> &nbsp; &nbsp;at IncomingMessage.onEnd (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:273:7)<br> &nbsp; &nbsp;at IncomingMessage.emit (events.js:314:20)<br> &nbsp; &nbsp;at IncomingMessage.EventEmitter.emit (domain.js:486:12)<br> &nbsp; &nbsp;at endReadableNT (_stream_readable.js:1244:12)<br> &nbsp; &nbsp;at processTicksAndRejections (internal/process/task_queues.js:80:21)</pre>\n</body>\n</html>\n"
             }
           },
           "422": {
@@ -301,12 +379,12 @@
                 "errors": {
                   "type": "object",
                   "properties": {
-                    "email": {
+                    "username": {
                       "type": "object",
                       "properties": {
                         "message": {
                           "type": "string",
-                          "example": "Error, expected `email` to be unique. Value: `maidul98@gmail.com`"
+                          "example": "Error, expected `username` to be unique. Value: `maiduld`"
                         },
                         "name": {
                           "type": "string",
@@ -317,7 +395,7 @@
                           "properties": {
                             "message": {
                               "type": "string",
-                              "example": "Error, expected `email` to be unique. Value: `maidul98@gmail.com`"
+                              "example": "Error, expected `username` to be unique. Value: `maiduld`"
                             },
                             "type": {
                               "type": "string",
@@ -325,11 +403,11 @@
                             },
                             "path": {
                               "type": "string",
-                              "example": "email"
+                              "example": "username"
                             },
                             "value": {
                               "type": "string",
-                              "example": "maidul98@gmail.com"
+                              "example": "maiduld"
                             }
                           }
                         },
@@ -339,11 +417,11 @@
                         },
                         "path": {
                           "type": "string",
-                          "example": "email"
+                          "example": "username"
                         },
                         "value": {
                           "type": "string",
-                          "example": "maidul98@gmail.com"
+                          "example": "maiduld"
                         }
                       }
                     }
@@ -355,7 +433,7 @@
                 },
                 "message": {
                   "type": "string",
-                  "example": "User validation failed: email: Error, expected `email` to be unique. Value: `maidul98@gmail.com`"
+                  "example": "User validation failed: username: Error, expected `username` to be unique. Value: `maiduld`"
                 },
                 "name": {
                   "type": "string",
@@ -365,9 +443,11 @@
             }
           }
         },
+        "tags": [
+          "User"
+        ],
         "produces": [
-          "application/json",
-          "text/html"
+          "application/json"
         ]
       }
     },
@@ -378,30 +458,259 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {}
+        "responses": {},
+        "tags": [
+          "User"
+        ]
       }
     },
-    "/posts/upload": {
-      "post": {
-        "summary": "/posts/upload",
+    "/posts/single/{id}": {
+      "get": {
+        "summary": "/posts/single/{id}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Post"
+        ]
+      }
+    },
+    "/posts/trending-posts": {
+      "get": {
+        "summary": "/posts/trending-posts",
         "consumes": [
           "application/json"
         ],
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "comments_count": {
+                    "type": "number"
+                  },
+                  "_id": {
+                    "type": "string"
+                  },
+                  "caption": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "verified": {
+                        "type": "boolean"
+                      },
+                      "suspended": {
+                        "type": "boolean"
+                      },
+                      "_id": {
+                        "type": "string"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "__v": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "audio_key": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "__v": {
+                    "type": "number"
+                  },
+                  "votes": {
+                    "type": "object",
+                    "properties": {
+                      "upvoters": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "downvoters": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "voteCounts": {
+                        "type": "number"
+                      },
+                      "_id": {
+                        "type": "string"
+                      },
+                      "post": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "__v": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "comments_count",
+                  "_id",
+                  "caption",
+                  "user",
+                  "audio_key",
+                  "createdAt",
+                  "__v",
+                  "votes"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "Post"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/posts/new": {
+      "post": {
+        "summary": "/posts/new",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "comments_count": {
+                  "type": "number",
+                  "example": 0
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "600c84bcc75db51c71d74109"
+                },
+                "caption": {
+                  "type": "string",
+                  "example": "ssss"
+                },
+                "user": {
+                  "type": "string",
+                  "example": "6009a830d3d378157dcd4320"
+                },
+                "audio_key": {
+                  "type": "string",
+                  "example": "1611433144792"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "example": "2021-01-23T20:19:08.595Z"
+                },
+                "__v": {
+                  "type": "number",
+                  "example": 0
+                },
+                "votes": {
+                  "type": "object",
+                  "properties": {
+                    "upvoters": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "6009a830d3d378157dcd4320"
+                      ]
+                    },
+                    "downvoters": {
+                      "type": "array",
+                      "items": {},
+                      "example": [
+                        null
+                      ]
+                    },
+                    "voteCounts": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "_id": {
+                      "type": "string",
+                      "example": "600c84bcc75db51c71d7410a"
+                    },
+                    "post": {
+                      "type": "string",
+                      "example": "600c84bcc75db51c71d74109"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2021-01-23T20:19:08.659Z"
+                    },
+                    "__v": {
+                      "type": "number",
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large",
+            "schema": {
+              "type": "string",
+              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>PayloadTooLargeError: request entity too large<br> &nbsp; &nbsp;at readStream (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:155:17)<br> &nbsp; &nbsp;at getRawBody (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:108:12)<br> &nbsp; &nbsp;at read (/Users/maidulislam/Desktop/backend-voice/node_modules/body-parser/lib/read.js:77:3)<br> &nbsp; &nbsp;at jsonParser (/Users/maidulislam/Desktop/backend-voice/node_modules/body-parser/lib/types/json.js:135:5)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at trim_prefix (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:317:13)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:284:7<br> &nbsp; &nbsp;at Function.process_params (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:335:12)<br> &nbsp; &nbsp;at next (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:275:10)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/express-oas-generator/index.js:390:7<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at trim_prefix (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:317:13)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:284:7<br> &nbsp; &nbsp;at Function.process_params (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:335:12)<br> &nbsp; &nbsp;at next (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:275:10)<br> &nbsp; &nbsp;at expressInit (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/middleware/init.js:40:5)</pre>\n</body>\n</html>\n"
+            }
+          }
+        },
+        "tags": [
+          "Post"
+        ],
+        "produces": [
+          "text/html",
+          "application/json"
+        ]
       }
     }
   },
-  "swagger": "2.0",
   "schemes": [
     "http"
   ],
-  "host": "localhost:3000",
-  "securityDefinitions": {
-    "authorization": {
-      "name": "authorization",
-      "in": "header",
-      "type": "apiKey"
+  "swagger": "2.0",
+  "tags": [
+    {
+      "name": "User"
+    },
+    {
+      "name": "Post"
+    },
+    {
+      "name": "Vote"
     }
-  }
+  ]
 }

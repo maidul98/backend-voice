@@ -62,6 +62,12 @@
         },
         "_id": {
           "type": "string"
+        },
+        "audio_location": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
         }
       }
     },
@@ -266,6 +272,22 @@
                 "expiresIn": {
                   "type": "string",
                   "example": "1d"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "msg": {
+                  "type": "string",
+                  "example": "You are not registered"
                 }
               }
             }
@@ -614,23 +636,23 @@
                 },
                 "_id": {
                   "type": "string",
-                  "example": "600c84bcc75db51c71d74109"
+                  "example": "600cf677f19b495fc1235b13"
                 },
                 "caption": {
                   "type": "string",
-                  "example": "ssss"
+                  "example": "Why walking barefbare is better "
                 },
                 "user": {
                   "type": "string",
                   "example": "6009a830d3d378157dcd4320"
                 },
-                "audio_key": {
+                "audio_location": {
                   "type": "string",
-                  "example": "1611433144792"
+                  "example": "https://audio-social-network.s3.amazonaws.com/1611462260737.mp3"
                 },
                 "createdAt": {
                   "type": "string",
-                  "example": "2021-01-23T20:19:08.595Z"
+                  "example": "2021-01-24T04:24:23.934Z"
                 },
                 "__v": {
                   "type": "number",
@@ -661,15 +683,15 @@
                     },
                     "_id": {
                       "type": "string",
-                      "example": "600c84bcc75db51c71d7410a"
+                      "example": "600cf678f19b495fc1235b14"
                     },
                     "post": {
                       "type": "string",
-                      "example": "600c84bcc75db51c71d74109"
+                      "example": "600cf677f19b495fc1235b13"
                     },
                     "createdAt": {
                       "type": "string",
-                      "example": "2021-01-23T20:19:08.659Z"
+                      "example": "2021-01-24T04:24:24.021Z"
                     },
                     "__v": {
                       "type": "number",
@@ -679,20 +701,64 @@
                 }
               }
             }
-          },
-          "413": {
-            "description": "Payload Too Large",
-            "schema": {
-              "type": "string",
-              "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>PayloadTooLargeError: request entity too large<br> &nbsp; &nbsp;at readStream (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:155:17)<br> &nbsp; &nbsp;at getRawBody (/Users/maidulislam/Desktop/backend-voice/node_modules/raw-body/index.js:108:12)<br> &nbsp; &nbsp;at read (/Users/maidulislam/Desktop/backend-voice/node_modules/body-parser/lib/read.js:77:3)<br> &nbsp; &nbsp;at jsonParser (/Users/maidulislam/Desktop/backend-voice/node_modules/body-parser/lib/types/json.js:135:5)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at trim_prefix (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:317:13)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:284:7<br> &nbsp; &nbsp;at Function.process_params (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:335:12)<br> &nbsp; &nbsp;at next (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:275:10)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/express-oas-generator/index.js:390:7<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at trim_prefix (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:317:13)<br> &nbsp; &nbsp;at /Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:284:7<br> &nbsp; &nbsp;at Function.process_params (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:335:12)<br> &nbsp; &nbsp;at next (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/router/index.js:275:10)<br> &nbsp; &nbsp;at expressInit (/Users/maidulislam/Desktop/backend-voice/node_modules/express/lib/middleware/init.js:40:5)</pre>\n</body>\n</html>\n"
-            }
           }
         },
         "tags": [
           "Post"
         ],
         "produces": [
-          "text/html",
+          "application/json"
+        ]
+      }
+    },
+    "/posts/audio/{audio_key}": {
+      "get": {
+        "summary": "/posts/audio/{audio_key}",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "audio_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {},
+        "tags": [
+          "Post"
+        ]
+      }
+    },
+    "/votes": {
+      "post": {
+        "summary": "/votes",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "msg": {
+                  "type": "string",
+                  "example": "voted"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Vote"
+        ],
+        "produces": [
           "application/json"
         ]
       }

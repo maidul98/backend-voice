@@ -12,6 +12,8 @@ const AWS = require("aws-sdk");
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ID,
   secretAccessKey: process.env.AWS_SECRET,
+  signatureVersion: "v4",
+  region: "us-east-2",
 });
 
 var upload = multer({
@@ -22,7 +24,7 @@ var upload = multer({
       cb(null, { fieldName: file.fieldname });
     },
     key: function (req, file, cb) {
-      cb(null, Date.now().toString());
+      cb(null, Date.now().toString() + ".mp3");
     },
   }),
 });
@@ -113,7 +115,7 @@ router.post(
   "/new",
   [passport.authenticate("jwt", { session: false }), upload.single("photos")],
   async function (req, res, next) {
-    console.log(req);
+    console.log(req.file);
     Post.create({
       caption: req.body.caption,
       user: req.user._id,
@@ -142,6 +144,28 @@ router.post(
         console.log(error);
         res.status(500);
       });
+  }
+);
+
+/**
+ * Make a post
+ */
+router.get(
+  "/audio/:audio_key",
+  [passport.authenticate("jwt", { session: false })],
+  async function (req, res, next) {
+    try {
+      const audio_key = req.params.audio_key;
+      const signedUrlExpireSeconds = 60 * 5;
+      const url = s3.getSignedUrl("getObject", {
+        Bucket: process.env.AWS_VOICE_BUCKET,
+        Key: audio_key,
+        Expires: signedUrlExpireSeconds,
+      });
+      res.json({ audio_location: url });
+    } catch (err) {
+      res.status(400).json({ msg: "Something went wrong" });
+    }
   }
 );
 

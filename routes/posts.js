@@ -37,7 +37,6 @@ router.get("/single/:id", function (req, res, next) {
     .populate({ path: "user", select: "-hash -salt -email" })
     .populate("votes")
     .then((post) => {
-      console.log(post);
       res.send(post);
       next();
     })
@@ -104,6 +103,7 @@ router.get("/trending-posts", function (req, res, next) {
           return comp;
         })
       );
+      next();
     })
     .catch((error) => console.log(error));
 });
@@ -137,12 +137,14 @@ router.post(
             .populate("votes")
             .then((updatedPost, obj) => {
               res.send(updatedPost);
+              next();
             });
         });
       })
       .catch((error) => {
         console.log(error);
         res.status(500);
+        next();
       });
   }
 );
@@ -162,9 +164,12 @@ router.get(
         Key: audio_key,
         Expires: signedUrlExpireSeconds,
       });
+
       res.json({ audio_location: url });
+      next();
     } catch (err) {
       res.status(400).json({ msg: "Something went wrong" });
+      next();
     }
   }
 );

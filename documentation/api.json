@@ -178,13 +178,20 @@
               }
             }
           },
-          "401": {}
+          "401": {
+            "description": "Unauthorized"
+          }
         },
         "tags": [
           "User"
         ],
         "produces": [
           "application/json"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
         ]
       }
     },
@@ -623,7 +630,22 @@
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "caption": {
+                  "type": "string",
+                  "example": "rant about ECE"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -636,11 +658,11 @@
                 },
                 "_id": {
                   "type": "string",
-                  "example": "600d0aaf47890366842762f4"
+                  "example": "600d10bfea27206a4550fac8"
                 },
                 "caption": {
                   "type": "string",
-                  "example": "Why walking barefbare is better :D"
+                  "example": "rant about ECE"
                 },
                 "user": {
                   "type": "string",
@@ -648,11 +670,11 @@
                 },
                 "audio_key": {
                   "type": "string",
-                  "example": "1611467438399.mp3"
+                  "example": "1611468989411.mp3"
                 },
                 "createdAt": {
                   "type": "string",
-                  "example": "2021-01-24T05:50:39.876Z"
+                  "example": "2021-01-24T06:16:31.019Z"
                 },
                 "__v": {
                   "type": "number",
@@ -683,15 +705,15 @@
                     },
                     "_id": {
                       "type": "string",
-                      "example": "600d0aaf47890366842762f5"
+                      "example": "600d10bfea27206a4550fac9"
                     },
                     "post": {
                       "type": "string",
-                      "example": "600d0aaf47890366842762f4"
+                      "example": "600d10bfea27206a4550fac8"
                     },
                     "createdAt": {
                       "type": "string",
-                      "example": "2021-01-24T05:50:39.961Z"
+                      "example": "2021-01-24T06:16:31.060Z"
                     },
                     "__v": {
                       "type": "number",
@@ -701,6 +723,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         },
         "tags": [
@@ -708,6 +733,11 @@
         ],
         "produces": [
           "application/json"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
         ]
       }
     },
@@ -753,6 +783,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         },
         "tags": [
@@ -760,6 +793,11 @@
         ],
         "produces": [
           "application/json"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
         ]
       }
     }
@@ -767,6 +805,13 @@
   "schemes": [
     "http"
   ],
+  "securityDefinitions": {
+    "authorization": {
+      "name": "authorization",
+      "in": "header",
+      "type": "apiKey"
+    }
+  },
   "swagger": "2.0",
   "tags": [
     {

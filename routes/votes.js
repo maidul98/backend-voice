@@ -126,8 +126,10 @@ router.post(
         );
       }
       res.json({ success: true, msg: "voted" });
+      next();
     } catch (err) {
       res.status(500).json({ success: false, msg: "Something went wrong" });
+      next();
     }
   }
 );

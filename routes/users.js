@@ -7,8 +7,9 @@ const utils = require("../lib/utils");
 router.get(
   "/user",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
+  (req, res, next) => {
     res.send(req.user);
+    next();
   }
 );
 
@@ -16,9 +17,9 @@ router.post("/login", function (req, res, next) {
   User.findOne({ username: req.body.username })
     .then((user) => {
       if (!user) {
-        return res
-          .status(401)
-          .json({ success: false, msg: "You are not registered" });
+        res.status(401).json({ success: false, msg: "You are not registered" });
+        next();
+        return;
       }
 
       const isValid = utils.validPassword(
@@ -38,12 +39,12 @@ router.post("/login", function (req, res, next) {
         res
           .status(401)
           .json({ success: false, msg: "Username or password is incorrect" });
+        next();
       }
-
-      next();
     })
     .catch((err) => {
-      next(err);
+      console.log(err);
+      next();
     });
 });
 
@@ -77,8 +78,10 @@ router.post("/register", function (req, res, next) {
       const messages = [];
       if (err.name == "ValidationError") {
         res.status(422).json(err);
+        next();
       } else {
         res.status(500).json(err);
+        next();
       }
     });
 });

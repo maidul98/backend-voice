@@ -636,23 +636,23 @@
                 },
                 "_id": {
                   "type": "string",
-                  "example": "600cf677f19b495fc1235b13"
+                  "example": "600d0aaf47890366842762f4"
                 },
                 "caption": {
                   "type": "string",
-                  "example": "Why walking barefbare is better "
+                  "example": "Why walking barefbare is better :D"
                 },
                 "user": {
                   "type": "string",
                   "example": "6009a830d3d378157dcd4320"
                 },
-                "audio_location": {
+                "audio_key": {
                   "type": "string",
-                  "example": "https://audio-social-network.s3.amazonaws.com/1611462260737.mp3"
+                  "example": "1611467438399.mp3"
                 },
                 "createdAt": {
                   "type": "string",
-                  "example": "2021-01-24T04:24:23.934Z"
+                  "example": "2021-01-24T05:50:39.876Z"
                 },
                 "__v": {
                   "type": "number",
@@ -683,15 +683,15 @@
                     },
                     "_id": {
                       "type": "string",
-                      "example": "600cf678f19b495fc1235b14"
+                      "example": "600d0aaf47890366842762f5"
                     },
                     "post": {
                       "type": "string",
-                      "example": "600cf677f19b495fc1235b13"
+                      "example": "600d0aaf47890366842762f4"
                     },
                     "createdAt": {
                       "type": "string",
-                      "example": "2021-01-24T04:24:24.021Z"
+                      "example": "2021-01-24T05:50:39.961Z"
                     },
                     "__v": {
                       "type": "number",

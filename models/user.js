@@ -35,6 +35,11 @@ const UserSchema = new mongoose.Schema({
     validate: [validateEmail, "Please enter a valid email"],
     unique: true,
   },
+  img_location: {
+    type: String,
+    default:
+      "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/default.png",
+  },
 });
 
 UserSchema.plugin(uniqueValidator),

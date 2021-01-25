@@ -16,7 +16,17 @@ const s3 = new AWS.S3({
   region: "us-east-2",
 });
 
-var upload = multer({
+const upload = multer({
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    if (ext !== ".mp3") {
+      return callback(new Error("Only .mp3 file is allowed"));
+    }
+    callback(null, true);
+  },
+  // limits: {
+  //   fileSize: 1024 * 1024,
+  // },
   storage: multerS3({
     s3: s3,
     bucket: process.env.AWS_VOICE_BUCKET,
@@ -113,7 +123,10 @@ router.get("/trending-posts", function (req, res, next) {
  */
 router.post(
   "/new",
-  [passport.authenticate("jwt", { session: false }), upload.single("photos")],
+  [
+    passport.authenticate("jwt", { session: false }),
+    upload.single("audio_file"),
+  ],
   async function (req, res, next) {
     console.log(req.file);
     Post.create({
@@ -149,9 +162,6 @@ router.post(
   }
 );
 
-/**
- * Make a post
- */
 router.get(
   "/audio/:audio_key",
   [passport.authenticate("jwt", { session: false })],

@@ -89,6 +89,14 @@ if (process.env.NODE_ENV === "production") {
 }
 
 /**
+ * Default error handler
+ */
+app.use(function (err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).json({ msg: "Something went wrong, please try again" });
+});
+
+/**
  * -------------- WEB SOCKET ----------------
  */
 

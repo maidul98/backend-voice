@@ -8,6 +8,7 @@ const utils = require("../lib/utils");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
+const path = require("path");
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ID,
@@ -30,6 +31,8 @@ const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.AWS_VOICE_BUCKET,
+    acl: "public-read",
+    contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
@@ -132,7 +135,7 @@ router.post(
     Post.create({
       caption: req.body.caption,
       user: req.user._id,
-      audio_key: req.file.key,
+      audio_key: req.file.location,
     })
       .then((post) => {
         Votes.create({

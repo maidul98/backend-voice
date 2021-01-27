@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== "production") {
   expressOasGenerator.handleResponses(app, {
     specOutputPath: openAPIFilePath,
     writeIntervalMs: 0,
-    mongooseModels: mongoose.modelNames(),
+    // mongooseModels: mongoose.modelNames(),
     predefinedSpec: predefinedSpec ? predefinedSpec : undefined,
   });
 }
@@ -70,7 +70,6 @@ require("./config/passport")(passport);
 app.use(passport.initialize());
 
 app.use(cors());
-app.options("*", cors());
 
 /**
  * -------------- ROUTES ----------------
@@ -92,8 +91,12 @@ if (process.env.NODE_ENV === "production") {
  * Default error handler
  */
 app.use(function (err, req, res, next) {
-  console.error(err.stack);
-  res.status(500).json({ msg: "Something went wrong, please try again" });
+  console.log(err);
+  if (err.name == "wrongFileTypeError") {
+    res.status(422).json({ msg: err.message });
+  } else {
+    res.status(500).json({ msg: "Something went wrong, please try again" });
+  }
 });
 
 /**

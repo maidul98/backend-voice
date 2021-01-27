@@ -9,19 +9,19 @@ const multer = require("multer");
 const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
 const path = require("path");
+const AWS_config = require("../config/aws.js");
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ID,
-  secretAccessKey: process.env.AWS_SECRET,
+const s3 = new AWS.S3(AWS_config.config, {
   signatureVersion: "v4",
-  region: "us-east-2",
 });
 
 const upload = multer({
   fileFilter: function (req, file, callback) {
     var ext = path.extname(file.originalname);
     if (ext !== ".mp3") {
-      return callback(new Error("Only .mp3 file is allowed"));
+      const wrongFileTypeError = new Error("Only .mp3 file is allowed");
+      wrongFileTypeError.name = "wrongFileTypeError";
+      return callback(wrongFileTypeError);
     }
     callback(null, true);
   },

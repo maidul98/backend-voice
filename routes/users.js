@@ -5,17 +5,17 @@ const passport = require("passport");
 const utils = require("../lib/utils");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-const AWS = require("aws-sdk");
+const nodemailer = require("nodemailer");
 const path = require("path");
+const AWS = require("aws-sdk");
+const AWS_config = require("../config/aws.js");
+const crypto = require("crypto");
 
 /**
  * Uploading profiles to S3
  */
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ID,
-  secretAccessKey: process.env.AWS_SECRET,
+const s3 = new AWS.S3(AWS_config.config, {
   signatureVersion: "v4",
-  region: "us-east-2",
 });
 
 const uploadProfile = multer({
@@ -40,6 +40,15 @@ const uploadProfile = multer({
     key: function (req, file, cb) {
       cb(null, Date.now().toString() + path.extname(file.originalname));
     },
+  }),
+});
+
+/**
+ * Sending emails
+ */
+let transporter = nodemailer.createTransport({
+  SES: new AWS.SES(AWS_config.config, {
+    apiVersion: "2010-12-01",
   }),
 });
 
@@ -124,30 +133,75 @@ router.post("/register", function (req, res, next) {
     });
 });
 
-router.post("/forgot", function (req, res, next) {
-  const saltHash = utils.genPassword(req.body.password);
-  const salt = saltHash.salt;
-  const hash = saltHash.hash;
+router.post("/password-reset/:token", function (req, res, next) {
+  User.findOne({
+    resetPasswordToken: req.params.token,
+    resetPasswordExpires: { $gt: Date.now() },
+  }).then((user) => {
+    if (!user) {
+      res
+        .status(410)
+        .json({ msg: "Password reset token is invalid or has expired." });
+    } else {
+      const saltHash = utils.genPassword(String(req.body.new_password));
+      const salt = saltHash.salt;
+      const hash = saltHash.hash;
 
-  const newUser = new User({
-    username: req.body.username,
-    hash: hash,
-    salt: salt,
+      User.update(
+        { username: req.params.username },
+        {
+          salt: salt,
+          hash: hash,
+        }
+      )
+        .then((user) => {
+          const jwt = utils.issueJWT(user);
+          res.json({
+            msg: "Your password has been reset successfully",
+            user: user,
+            token: jwt.token,
+            expiresIn: jwt.expires,
+          });
+          next();
+        })
+        .catch((err) => next(err));
+    }
   });
+});
 
-  newUser
-    .save()
+router.put("/request-password-reset/:username", function (req, res, next) {
+  const token = crypto.randomBytes(20).toString("hex");
+  User.findOne({ username: req.params.username })
     .then((user) => {
-      const jwt = utils.issueJWT(user);
-      res.json({
-        success: true,
-        user: user,
-        token: jwt.token,
-        expiresIn: jwt.expires,
+      user.resetPasswordToken = token;
+      user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+      user.save().then(() => {
+        let fieldheader =
+          `You're receiving this e-mail because you or someone else has requested a password reset for your user account. <br> <br> Click the link below to reset your password: <br> ` +
+          `https://www.ourwebsite.com/?passwordreset=` +
+          token +
+          `<br> <br> If you did not request a password reset you can safely ignore this email.`;
+        transporter
+          .sendMail({
+            from: "maidul98@gmail.com",
+            to: "maidul98@gmail.com",
+            subject: "Password reset request",
+            html: fieldheader,
+          })
+          .then((info) => {
+            res.json({
+              msg:
+                "If an account exists with this username, an email will be sent shorty",
+            });
+          });
       });
-      next();
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      res.json({
+        msg:
+          "If an account exists with this username, an email will be sent shorty",
+      });
+    });
 });
 
 router.post(

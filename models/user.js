@@ -40,6 +40,8 @@ const UserSchema = new mongoose.Schema({
     default:
       "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/default.png",
   },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
 });
 
 UserSchema.plugin(uniqueValidator),

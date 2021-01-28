@@ -604,7 +604,7 @@
                     "format": "binary"
                   },
                   "caption": {
-                    "description": "The audio file to upload. Must be in mp3 format.",
+                    "description": "Caption of the post",
                     "type": "string"
                   }
                 },

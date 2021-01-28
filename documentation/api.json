@@ -602,9 +602,13 @@
                     "description": "The audio file to upload. Must be in mp3 format.",
                     "type": "string",
                     "format": "binary"
+                  },
+                  "caption": {
+                    "description": "The audio file to upload. Must be in mp3 format.",
+                    "type": "string"
                   }
                 },
-                "required": ["audio_file"]
+                "required": ["audio_file", "caption"]
               }
             }
           },

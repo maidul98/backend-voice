@@ -18,8 +18,10 @@ const s3 = new AWS.S3(AWS_config.config, {
 const upload = multer({
   fileFilter: function (req, file, callback) {
     var ext = path.extname(file.originalname);
-    if (ext !== ".mp3") {
-      const wrongFileTypeError = new Error("Only .mp3 file is allowed");
+    if (ext !== ".mp3" && ext !== ".m4a") {
+      const wrongFileTypeError = new Error(
+        "Only .mp3 and .m4a file is allowed"
+      );
       wrongFileTypeError.name = "wrongFileTypeError";
       return callback(wrongFileTypeError);
     }

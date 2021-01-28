@@ -7,10 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon  --ignore 'documentation/*' app.js",
     "start": "node app.js",
-    "build": "cd client && npm run build",
     "install-client": "cd client && npm install",
     "gen-keys": "node generateKeypair.js",
-    "heroku-postbuild": "npm run install-client && npm run build && npm run gen-keys"
+    "heroku-postbuild": "npm run gen-keys"
   },
   "engines": {
     "node": "14.7.0"

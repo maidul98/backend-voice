@@ -12,6 +12,9 @@
     "gen-keys": "node generateKeypair.js",
     "heroku-postbuild": "npm run install-client && npm run build && npm run gen-keys"
   },
+  "engines": {
+    "node": "14.7.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

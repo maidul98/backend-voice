@@ -53,6 +53,128 @@
         "security": [{ "authorization": [] }]
       }
     },
+    "/posts/delete/{id}": {
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the post to edit",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Your post has been deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Couldn't delete your post, please try again"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Post"]
+      }
+    },
+    "/posts/edit/{id}": {
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the post to edit",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "new_caption": {
+                    "type": "string",
+                    "example": "this is a new caption"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Your post has been updated"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Couldn't update your post, please try again"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Post not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Post"]
+      }
+    },
     "/users/login": {
       "post": {
         "summary": "/users/login",
@@ -784,14 +906,16 @@
     { "name": "Authentication" },
     { "name": "Profile" },
     { "name": "Post" },
-    { "name": "Vote" }
+    { "name": "Comment" },
+    { "name": "Vote" },
+    { "name": "Notification" }
   ],
   "servers": [
     {
       "url": "https://powerful-retreat-02063.herokuapp.com"
     },
     {
-      "url": "localhost:3000"
+      "url": "http://localhost:3000"
     }
   ],
   "components": {

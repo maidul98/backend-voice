@@ -216,8 +216,9 @@ router.post(
       {
         img_location: req.file.location,
       }
-    ).then((user) => {});
-    res.json({ msg: "Your profile image has been updated" });
+    ).then((user) => {
+      res.json({ msg: "Your profile image has been updated" });
+    });
   }
 );
 

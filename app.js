@@ -5,8 +5,8 @@ const passport = require("passport");
 const fs = require("fs");
 const mkdirp = require("mkdirp");
 const bodyParser = require("body-parser");
-const expressOasGenerator = require("express-oas-generator");
 const mongoose = require("mongoose");
+const swaggerUI = require("swagger-ui-express");
 var app = express();
 
 /**
@@ -18,26 +18,16 @@ require("./models/Vote");
 // require("./models/Comment");
 
 /**
- * -------------- INTERCEPT RESPONSES ----------------
+ * -------------- OPEN API ----------------
  */
-if (process.env.NODE_ENV !== "production") {
-  let openAPIFilePath = "./documentation/api.json";
-  mkdirp.sync(path.parse(openAPIFilePath).dir);
-  let predefinedSpec;
+let openAPIFilePath = "./documentation/api.json";
+mkdirp.sync(path.parse(openAPIFilePath).dir);
 
-  try {
-    predefinedSpec = JSON.parse(
-      fs.readFileSync(openAPIFilePath, { encoding: "utf-8" })
-    );
-  } catch (e) {}
+predefinedSpec = JSON.parse(
+  fs.readFileSync(openAPIFilePath, { encoding: "utf-8" })
+);
 
-  expressOasGenerator.handleResponses(app, {
-    specOutputPath: openAPIFilePath,
-    writeIntervalMs: 0,
-    // mongooseModels: mongoose.modelNames(),
-    predefinedSpec: predefinedSpec ? predefinedSpec : undefined,
-  });
-}
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(predefinedSpec));
 
 // Replace of body-parser middleware
 app.use(express.json());
@@ -98,15 +88,6 @@ app.use(function (err, req, res, next) {
     res.status(500).json({ msg: "Something went wrong, please try again" });
   }
 });
-
-/**
- * -------------- WEB SOCKET ----------------
- */
-
-// INTERCEPT REQUESTS
-if (process.env.NODE_ENV !== "production") {
-  expressOasGenerator.handleRequests(app);
-}
 
 /**
  * -------------- SERVER ----------------

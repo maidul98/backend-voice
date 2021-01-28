@@ -55,6 +55,7 @@
     },
     "/posts/delete/{id}": {
       "delete": {
+        "description": "Soft deletes the users post",
         "parameters": [
           {
             "in": "path",

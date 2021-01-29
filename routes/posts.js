@@ -157,9 +157,11 @@ router.post(
         });
       })
       .catch((error) => {
-        console.log(error);
-        res.status(500);
-        next();
+        if (err.name == "ValidationError") {
+          res.status(422).json(err);
+        } else {
+          next(err);
+        }
       });
   }
 );
@@ -186,36 +188,48 @@ router.get(
   }
 );
 
-router.put("/edit/:id", function (req, res) {
-  Post.findOneAndUpdate(
-    { _id: req.params.id, is_deleted: { $ne: true } },
-    {
-      caption: req.body.new_caption,
-    }
-  )
-    .then((post) => {
-      if (!post) {
-        res.status(400).json({ msg: "Post not found" });
+router.put(
+  "/edit/:id",
+  passport.authenticate("jwt", { session: false }),
+  function (req, res) {
+    Post.findOneAndUpdate(
+      { _id: req.params.id, is_deleted: { $ne: true } },
+      {
+        caption: req.body.new_caption,
       }
-      res.json({ msg: "Your post has been updated" });
-    })
-    .catch(function (err) {
-      res
-        .status(500)
-        .json({ msg: "Couldn't update your post, please try again" });
-    });
-});
+    )
+      .then((post) => {
+        if (!post) {
+          res.status(400).json({ msg: "Post not found" });
+        }
+        res.json({ msg: "Your post has been updated" });
+      })
+      .catch(function (err) {
+        if (err.name == "ValidationError") {
+          res.status(422).json(err);
+        } else {
+          res
+            .status(500)
+            .json({ msg: "Couldn't update your post, please try again" });
+        }
+      });
+  }
+);
 
-router.delete("/delete/:id", function (req, res) {
-  Post.findOneAndUpdate({ _id: req.params.id }, { is_deleted: true })
-    .then((post) => {
-      res.json({ msg: "Your post has been deleted" });
-    })
-    .catch(function (err) {
-      res
-        .status(500)
-        .json({ msg: "Couldn't deleted your post, please try again" });
-    });
-});
+router.delete(
+  "/delete/:id",
+  passport.authenticate("jwt", { session: false }),
+  function (req, res) {
+    Post.findOneAndUpdate({ _id: req.params.id }, { is_deleted: true })
+      .then((post) => {
+        res.json({ msg: "Your post has been deleted" });
+      })
+      .catch(function (err) {
+        res
+          .status(500)
+          .json({ msg: "Couldn't deleted your post, please try again" });
+      });
+  }
+);
 
 module.exports = router;

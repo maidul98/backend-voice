@@ -3,153 +3,99 @@ const router = require("express").Router();
 const axios = require("axios");
 const passport = require("passport");
 const Comment = mongoose.model("Comment");
-const Notifications = mongoose.model("Notifications");
 const Post = mongoose.model("Post");
 
-/**
- * Create a comment for a post
- */
-router.post("/", passport.authenticate("jwt", { session: false }), function (
-  req,
-  res,
-  next
-) {
-  console.log(req.body.body);
-  Post.findById(req.body.post_id)
-    .then((post) => {
-      if (post) {
-        Comment.create({
-          post: req.body.post_id,
-          user: req.user._id,
-          body: req.body.body,
-        })
-          .then(async (newComment) => {
-            newComment = await newComment
-              .populate({ path: "user", select: "-hash -salt -email" })
-              .execPopulate();
+router.post(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  function (req, res, next) {
+    Post.findById(req.params.id)
+      .then((post) => {
+        if (post) {
+          const new_comment = new Comment();
+          new_comment.body = req.body.comment;
+          new_comment.post = post._id;
+          new_comment.user = req.user._id;
 
-            // update total comments for this post
-            await Post.updateOne(
-              { _id: req.body.post_id },
-              { $inc: { comments_count: 1 } }
-            );
-
-            // create notif
-            if (String(post.user) != String(req.user._id)) {
-              await Notifications.create({
-                sender: req.user._id,
-                receiver: post.user,
-                action: "commented",
-                body: req.body.body,
-                preposition: "on",
-                post: post._id,
-              });
-            }
-
-            res.send(newComment);
+          Comment.populate(new_comment, {
+            path: "user",
+            select:
+              "-hash -salt -email -resetPasswordExpires -resetPasswordToken -suspended",
           })
-          .catch((error) => console.log(error));
-      } else {
-        throw Error("Not a valid post");
-      }
-    })
-    .catch((error) => console.log(error));
-});
+            .then((newComment) => {
+              Post.updateOne(
+                { _id: post._id },
+                { $inc: { comments_count: 1 } }
+              ).then(() => res.send(newComment));
+            })
+            .catch((error) => {
+              console.log(error);
+              next(error);
+            });
+        } else {
+          throw next(Error("Post not found"));
+        }
+      })
+      .catch((error) => next(error));
+  }
+);
 
-/**
- * get all comments for a post
- */
-router.get("/", function (req, res, next) {
-  Comment.find({
-    post: req.query.id,
-    parent: { $exists: false },
-  })
-    .populate({ path: "user", select: "-hash -salt -email" })
-    .populate("replies")
+router.get("/new/:post_id", function (req, res, next) {
+  const skip =
+    req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
+
+  Comment.find(
+    {
+      post: req.params.post_id,
+    },
+    undefined,
+    { skip, limit: 3 }
+  )
+    .populate({
+      path: "user",
+      select:
+        "-hash -salt -email -resetPasswordExpires -resetPasswordToken -suspended",
+    })
     .sort({ createdAt: -1 })
     .then((result) => {
       res.send(result);
     })
-    .catch(() => res.status(500));
+    .catch((err) => next(err));
 });
 
-/**
- * Create reply to a parent post
- */
-router.post(
-  "/reply",
-  passport.authenticate("jwt", { session: false }),
-  function (req, res, next) {
-    console.log(req.body);
-    Post.findById(req.body.post_id)
-      .then((post) => {
-        if (post) {
-          Comment.create({
-            post: req.body.post_id,
-            user: req.user._id,
-            body: req.body.body,
-            parent: req.body.comment_parent_id,
-          })
-            .then(async (newReply) => {
-              newReply = await newReply
-                .populate({ path: "user", select: "-hash -salt -email" })
-                .execPopulate();
-              // update total comments for this post
-              await Post.updateOne(
-                { _id: req.body.post_id },
-                { $inc: { comments_count: 1 } }
-              );
-              //update the replies counter for the parent comment
-              Comment.updateOne(
-                { _id: req.body.comment_parent_id },
-                { $inc: { repliesCount: 1 } }
-              ).then(async () => {
-                // create notif
-                if (String(post.user) != String(req.user._id)) {
-                  await Notifications.create({
-                    sender: req.user._id,
-                    receiver: post.user,
-                    action: "replied",
-                    body: req.body.body,
-                    preposition: "to your comment in",
-                    post: post._id,
-                  });
-                }
-
-                res.send(newReply);
-              });
-            })
-            .catch((error) => {
-              console.log("error2");
-              res.status(500);
-            });
-        } else {
-          console.log("error3");
-          res.status(500);
-        }
-      })
-      .catch((error) => res.status(500));
-  }
-);
-
-/**
- * Get replies for a comment
- */
-router.get("/reply", function (req, res, next) {
-  console.log(req.body);
-  Comment.find({
-    parent: req.query.parentId,
-  })
-    .populate({ path: "user", select: "-hash -salt -email" })
-    .sort({ createdAt: 1 })
-    .then((result) => {
-      if (result) {
-        res.send(result);
-      } else {
-        res.status(500);
-      }
+router.put("/:comment_id", function (req, res, next) {
+  Comment.findOneAndUpdate(
+    {
+      id_: req.params.comment_id,
+    },
+    {
+      body: req.body.body,
+    }
+  )
+    .populate({
+      path: "user",
+      select:
+        "-hash -salt -email -resetPasswordExpires -resetPasswordToken -suspended",
     })
-    .catch();
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => next(err));
+});
+
+router.get("single/:comment_id", function (req, res, next) {
+  Comment.findOne({
+    id_: req.params.comment_id,
+  })
+    .populate({
+      path: "user",
+      select:
+        "-hash -salt -email -resetPasswordExpires -resetPasswordToken -suspended",
+    })
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => next(err));
 });
 
 module.exports = router;

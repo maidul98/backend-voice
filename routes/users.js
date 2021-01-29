@@ -122,7 +122,6 @@ router.post("/register", function (req, res, next) {
       next();
     })
     .catch((err) => {
-      const messages = [];
       if (err.name == "ValidationError") {
         res.status(422).json(err);
         next();

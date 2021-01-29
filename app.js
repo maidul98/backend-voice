@@ -15,7 +15,8 @@ var app = express();
 require("./models/user");
 require("./models/Post");
 require("./models/Vote");
-// require("./models/Comment");
+require("./models/Comment");
+require("./models/Reply");
 
 /**
  * -------------- OPEN API ----------------

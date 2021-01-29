@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const CommentSchema = new mongoose.Schema({
+const ReplySchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
@@ -17,18 +17,10 @@ const CommentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  votes: {
-    type: Number,
-    required: false,
-  },
-  post: {
+  comment_id: {
     type: mongoose.Types.ObjectId,
-    ref: "Post",
-  },
-  repliesCount: {
-    type: Number,
-    default: 0,
+    ref: "Comment",
   },
 });
 
-mongoose.model("Comment", CommentSchema);
+mongoose.model("Reply", ReplySchema);

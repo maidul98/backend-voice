@@ -15,7 +15,7 @@ const CommentSchema = new mongoose.Schema({
   },
   body: {
     type: String,
-    required: true,
+    required: [true, "Comment cannot be empty"],
   },
   votes: {
     type: Number,

@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("./user");
 
-/**
- * TODO
- * post title, user, votes..
- */
 const PostSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
@@ -13,10 +9,9 @@ const PostSchema = new mongoose.Schema({
   caption: {
     type: String,
   },
-  // art_key: {
-  //   type: String,
-  //   // required: true,
-  // },
+  art_key: {
+    type: String,
+  },
   votes: {
     type: mongoose.Types.ObjectId,
     ref: "Vote",

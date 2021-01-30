@@ -17,9 +17,8 @@ const ReplySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  comment_id: {
-    type: mongoose.Types.ObjectId,
-    ref: "Comment",
+  to_id: {
+    type: mongoose.Types.ObjectId, // can be a comment id or reply id
   },
 });
 

@@ -53,16 +53,17 @@
         "security": [{ "authorization": [] }]
       }
     },
-    "/comments/{id}": {
+    "/comments/{post_id}": {
       "post": {
         "description": "Post a comment",
         "summary": "Post a new comment",
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "post_id",
             "description": "ID of the post to comment on",
-            "required": true
+            "required": true,
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -70,7 +71,7 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "comment": { "type": "string", "example": "this a comment" }
+                  "body": { "type": "string", "example": "this a comment" }
                 }
               }
             }
@@ -150,6 +151,81 @@
               }
             }
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "required": ["body"],
+                      "properties": {
+                        "body": {
+                          "required": [
+                            "message",
+                            "name",
+                            "properties",
+                            "kind",
+                            "path"
+                          ],
+                          "properties": {
+                            "message": {
+                              "type": "string",
+                              "example": "Comment cannot be empty"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "ValidatorError"
+                            },
+                            "properties": {
+                              "required": ["message", "type", "path"],
+                              "properties": {
+                                "message": {
+                                  "type": "string",
+                                  "example": "Comment cannot be empty"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "example": "required"
+                                },
+                                "path": {
+                                  "type": "string",
+                                  "example": "body"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "kind": {
+                              "type": "string",
+                              "example": "required"
+                            },
+                            "path": {
+                              "type": "string",
+                              "example": "body"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "_message": {
+                      "type": "string",
+                      "example": "Comment validation failed"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Comment validation failed: body: Comment cannot be empty"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "ValidationError"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "content": {
               "application/json": {
@@ -178,7 +254,8 @@
             "in": "path",
             "name": "post_id",
             "description": "ID of the post",
-            "required": true
+            "required": true,
+            "schema": { "type": "string" }
           },
           {
             "in": "query",
@@ -216,19 +293,55 @@
         "security": [{ "authorization": [] }]
       }
     },
-    "/comments/single/{comment_id}": {
+    "/comments/all/{post_id}": {
       "get": {
-        "tags": ["Comment"],
-        "security": [{ "authorization": [] }]
+        "parameters": [
+          {
+            "in": "path",
+            "name": "post_id",
+            "description": "ID of the post",
+            "schema": { "type": "string" }
+          }
+        ],
+        "tags": ["Comment"]
       }
     },
-    "/replies/{comment_id}": {
+    "/replies/{id}": {
       "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the Comment or the Reply to respond to",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "body": {
+                    "type": "string",
+                    "example": "this is a comment",
+                    "description": "The text of the response"
+                  },
+                  "response_type": {
+                    "type": "stirng",
+                    "example": "comment",
+                    "description": "You can respond to a Comment or a Reply. Specify either 'comment' or 'reply'"
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": ["Replies"],
         "security": [{ "authorization": [] }]
       }
     },
-
     "/posts/delete/{id}": {
       "delete": {
         "description": "Soft deletes the users post",
@@ -237,7 +350,8 @@
             "in": "path",
             "name": "id",
             "description": "ID of the post to edit",
-            "required": true
+            "required": true,
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -284,7 +398,8 @@
             "in": "path",
             "name": "id",
             "description": "ID of the post to edit",
-            "required": true
+            "required": true,
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {

@@ -129,8 +129,7 @@ router.post(
     passport.authenticate("jwt", { session: false }),
     upload.single("audio_file"),
   ],
-  async function (req, res, next) {
-    console.log(req.file);
+  function (req, res, next) {
     Post.create({
       caption: req.body.caption,
       user: req.user._id,

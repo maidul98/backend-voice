@@ -19,25 +19,25 @@
   "license": "ISC",
   "dependencies": {
     "async": "^3.2.0",
-    "aws-sdk": "^2.829.0",
+    "aws-sdk": "^2.834.0",
     "axios": "^0.20.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mkdirp": "^1.0.4",
-    "mongoose": "^5.7.14",
+    "mongoose": "^5.11.14",
     "mongoose-to-swagger": "^1.1.1",
     "mongoose-unique-validator": "^2.0.3",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
     "nodemailer": "^6.4.17",
-    "nodemon": "^2.0.4",
-    "passport": "^0.4.0",
+    "nodemon": "^2.0.7",
+    "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
     "passport-jwt": "^4.0.0",
-    "socket.io": "^2.3.0",
-    "swagger-jsdoc": "^6.0.1",
+    "socket.io": "^2.4.1",
+    "swagger-jsdoc": "^6.0.2",
     "swagger-ui-express": "^4.1.6",
-    "tslib": "^2.0.0"
+    "tslib": "^2.1.0"
   }
 }

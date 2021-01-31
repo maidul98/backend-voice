@@ -18,8 +18,8 @@ const CommentSchema = new mongoose.Schema({
     required: [true, "Comment cannot be empty"],
   },
   votes: {
-    type: Number,
-    required: false,
+    type: mongoose.Types.ObjectId,
+    ref: "Vote",
   },
   post: {
     type: mongoose.Types.ObjectId,

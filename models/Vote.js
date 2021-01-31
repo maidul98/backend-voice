@@ -5,7 +5,7 @@ const Vote = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  post: { type: mongoose.Types.ObjectId, ref: "Post", required: true },
+  vote_on_id: { type: mongoose.Types.ObjectId, required: true },
   upvoters: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   downvoters: [{ type: mongoose.Types.ObjectId, ref: "User" }],
   voteCounts: {

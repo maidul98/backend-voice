@@ -24,6 +24,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "mathjs": "^9.1.0",
     "mkdirp": "^1.0.4",
     "mongoose": "^5.11.14",
     "mongoose-to-swagger": "^1.1.1",

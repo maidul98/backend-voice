@@ -97,9 +97,9 @@ function hot(score, date) {
 
 router.get("/trending-posts", function (req, res, next) {
   let query = {};
-  if (req.query.classId != undefined) {
-    query = { class_id: req.query.classId };
-  }
+  // if (req.query.classId != undefined) {
+  //   query = { class_id: req.query.classId };
+  // }
 
   const skip =
     req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
@@ -120,7 +120,7 @@ router.get("/trending-posts", function (req, res, next) {
       );
       next();
     })
-    .catch((error) => console.log(error));
+    .catch((error) => next(error));
 });
 
 router.post(
@@ -137,7 +137,7 @@ router.post(
     })
       .then((post) => {
         Votes.create({
-          post: post._id,
+          vote_on_id: post._id,
           upvoters: [req.user._id],
           voteCounts: 1,
         }).then((newVotes) => {
@@ -219,7 +219,7 @@ router.delete(
   "/delete/:id",
   passport.authenticate("jwt", { session: false }),
   function (req, res) {
-    Post.findOneAndUpdate({ _id: req.params.id }, { is_deleted: true })
+    Post.remove({ _id: req.params.id, user: req.user._id })
       .then((post) => {
         res.json({ msg: "Your post has been deleted" });
       })

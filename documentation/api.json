@@ -246,26 +246,34 @@
         "security": [{ "authorization": [] }]
       }
     },
-    "/comments/new/{post_id}": {
-      "get": {
-        "summary": "Get a list of comments of a post ordered by time: newest first",
+    "/comments/{comment_id}": {
+      "delete": {
+        "summary": "Delete a comment",
         "parameters": [
           {
             "in": "path",
-            "name": "post_id",
-            "description": "ID of the post",
+            "name": "comment_id",
+            "description": "ID of the comment to delete",
             "required": true,
             "schema": { "type": "string" }
-          },
-          {
-            "in": "query",
-            "name": "skip",
-            "description": "How many to skip before returning the next batch. You get 10 comments with skip = 0, to get the next 10, set skip=10..."
           }
         ],
         "responses": {
           "200": {
-            "description": "A list of comments"
+            "description": "A list of comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Your comment has been deleted"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "content": {
@@ -287,23 +295,240 @@
         "security": [{ "authorization": [] }]
       }
     },
-    "/comments/{comment_id}": {
-      "put": {
-        "tags": ["Comment"],
-        "security": [{ "authorization": [] }]
-      }
-    },
-    "/comments/all/{post_id}": {
+    "/comments/sort/best/{post_id}": {
       "get": {
+        "summary": "Get a list of comments of a post ordered by time: newest first",
         "parameters": [
           {
             "in": "path",
             "name": "post_id",
             "description": "ID of the post",
+            "required": true,
             "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "How many to skip before returning the next batch. You get 10 comments with skip = 0, to get the next 10, set skip=10..."
           }
         ],
-        "tags": ["Comment"]
+        "responses": {
+          "200": {
+            "description": "A list of comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "repliesCount": {
+                        "type": "number",
+                        "example": 0
+                      },
+                      "_id": {
+                        "type": "string",
+                        "example": "6014cc1f3442d474ad8d1419"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "example": "2021-01-30T03:01:51.695Z"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "example": "2021-01-30T03:01:51.695Z"
+                      },
+                      "body": {
+                        "type": "string",
+                        "example": "this a comment!!"
+                      },
+                      "post": {
+                        "type": "string",
+                        "example": "600fae1ed984192830e4474d"
+                      },
+                      "user": {
+                        "required": [
+                          "verified",
+                          "img_location",
+                          "_id",
+                          "username",
+                          "createdAt",
+                          "__v"
+                        ],
+                        "properties": {
+                          "verified": {
+                            "type": "boolean",
+                            "example": false
+                          },
+                          "img_location": {
+                            "type": "string",
+                            "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/1611807455351.jpg"
+                          },
+                          "_id": {
+                            "type": "string",
+                            "example": "600fadc1d984192830e4473a"
+                          },
+                          "username": {
+                            "type": "string",
+                            "example": "maidul98"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2021-01-26T05:50:57.746Z"
+                          },
+                          "__v": {
+                            "type": "number",
+                            "example": 0
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "__v": {
+                        "type": "number",
+                        "example": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Something went wrong, please try again"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Comment"],
+        "security": [{ "authorization": [] }]
+      }
+    },
+    "/comments/sort/new/{post_id}": {
+      "get": {
+        "summary": "Get a list of comments of a post ordered by time: newest first",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "post_id",
+            "description": "ID of the post",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "How many to skip before returning the next batch. You get 10 comments with skip = 0, to get the next 10, set skip=10..."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "repliesCount": {
+                        "type": "number",
+                        "example": 0
+                      },
+                      "_id": {
+                        "type": "string",
+                        "example": "6014cc1f3442d474ad8d1419"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "example": "2021-01-30T03:01:51.695Z"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "example": "2021-01-30T03:01:51.695Z"
+                      },
+                      "body": {
+                        "type": "string",
+                        "example": "this a comment!!"
+                      },
+                      "post": {
+                        "type": "string",
+                        "example": "600fae1ed984192830e4474d"
+                      },
+                      "user": {
+                        "required": [
+                          "verified",
+                          "img_location",
+                          "_id",
+                          "username",
+                          "createdAt",
+                          "__v"
+                        ],
+                        "properties": {
+                          "verified": {
+                            "type": "boolean",
+                            "example": false
+                          },
+                          "img_location": {
+                            "type": "string",
+                            "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/1611807455351.jpg"
+                          },
+                          "_id": {
+                            "type": "string",
+                            "example": "600fadc1d984192830e4473a"
+                          },
+                          "username": {
+                            "type": "string",
+                            "example": "maidul98"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2021-01-26T05:50:57.746Z"
+                          },
+                          "__v": {
+                            "type": "number",
+                            "example": 0
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "__v": {
+                        "type": "number",
+                        "example": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Something went wrong, please try again"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Comment"],
+        "security": [{ "authorization": [] }]
       }
     },
     "/replies/{id}": {
@@ -1007,7 +1232,7 @@
     },
     "/posts/new": {
       "post": {
-        "summary": "/posts/new",
+        "summary": "Make a new post",
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -1155,16 +1380,16 @@
     },
     "/votes": {
       "post": {
-        "summary": "/votes",
+        "summary": "Vote on posts or comments",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "properties": {
                   "voteType": { "type": "string", "example": "down" },
-                  "postId": {
+                  "vote_on_id": {
                     "type": "string",
-                    "description": "The id of the post you want to vote on"
+                    "description": "The id of the post or comment you want to vote on"
                   }
                 },
                 "type": "object"
@@ -1206,9 +1431,6 @@
     { "name": "Notification" }
   ],
   "servers": [
-    {
-      "url": "https://powerful-retreat-02063.herokuapp.com"
-    },
     {
       "url": "http://localhost:3000"
     }

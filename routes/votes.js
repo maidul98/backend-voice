@@ -1,11 +1,8 @@
 const mongoose = require("mongoose");
 const router = require("express").Router();
-const postVotesCollection = mongoose.model("Vote");
+const Vote = mongoose.model("Vote");
 const passport = require("passport");
 
-/**
- * Make a vote
- */
 router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
@@ -15,14 +12,14 @@ router.post(
       var voterType = null;
 
       let requestBody = req.body;
-      let postToFind = requestBody["postId"];
+      let vote_on_id = requestBody["vote_on_id"];
 
       if (requestBody["voteType"] == "") {
         let changed = false;
         let voteChange = 0;
 
-        const isInDownVote = await postVotesCollection.updateOne(
-          { post: postToFind },
+        const isInDownVote = await Vote.updateOne(
+          { vote_on_id: vote_on_id },
           {
             $pull: {
               downvoters: req.user._id,
@@ -34,8 +31,8 @@ router.post(
           changed = true;
           voteChange = 1;
         } else {
-          const isInUpVote = await postVotesCollection.updateOne(
-            { post: postToFind },
+          const isInUpVote = await Vote.updateOne(
+            { vote_on_id: vote_on_id },
             {
               $pull: {
                 upvoters: req.user._id,
@@ -50,8 +47,8 @@ router.post(
         }
 
         if (changed == true) {
-          await postVotesCollection.updateOne(
-            { post: postToFind },
+          await Vote.updateOne(
+            { vote_on_id: vote_on_id },
             {
               $inc: {
                 voteCounts: voteChange,
@@ -60,12 +57,11 @@ router.post(
           );
         }
       }
-      //If the user is already in the downvoters list, then we remove from it and add to the upvoters
-      //That's why for negating the downvote -(-1) and another upvote (+1) - Totally 2 is added to the count
+
       if (requestBody["voteType"] == "up") {
         voterType = "upvoters";
-        await postVotesCollection.updateOne(
-          { post: postToFind },
+        await Vote.updateOne(
+          { vote_on_id: vote_on_id },
           {
             $pull: {
               downvoters: req.user._id,
@@ -79,13 +75,10 @@ router.post(
             }
           }
         );
-      }
-      //The same logic for downvoting as well. We remove from the upvoters list and add to the downvoters
-      //We negate the upvote -(+1) and another downvote - Totally -2 is added to the count
-      else if (requestBody["voteType"] == "down") {
+      } else if (requestBody["voteType"] == "down") {
         voterType = "downvoters";
-        await postVotesCollection.updateOne(
-          { post: postToFind },
+        await Vote.updateOne(
+          { vote_on_id: vote_on_id },
           {
             $pull: {
               upvoters: req.user._id,
@@ -100,21 +93,20 @@ router.post(
           }
         );
       }
-      //Finally here we make the changes to the DB for upvote and downvote
-      //We add it to the respective voters list and modify the counter accordingly
+
       if (requestBody["voteType"] !== "") {
         const voterTypeObj = {};
         voterTypeObj[voterType] = req.user._id;
 
-        postVotesCollection.updateOne(
-          { post: postToFind },
+        Vote.updateOne(
+          { vote_on_id: vote_on_id },
           {
             $addToSet: voterTypeObj,
           },
           async (error, result) => {
             if (result.nModified > 0) {
-              await postVotesCollection.updateOne(
-                { post: postToFind },
+              await Vote.updateOne(
+                { vote_on_id: vote_on_id },
                 {
                   $inc: {
                     voteCounts: counterInc,
@@ -126,10 +118,8 @@ router.post(
         );
       }
       res.json({ success: true, msg: "voted" });
-      next();
     } catch (err) {
-      res.status(500).json({ success: false, msg: "Something went wrong" });
-      next();
+      next(err);
     }
   }
 );

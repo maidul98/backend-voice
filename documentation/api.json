@@ -1432,10 +1432,10 @@
   ],
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "https://powerful-retreat-02063.herokuapp.com"
     },
     {
-      "url": "https://powerful-retreat-02063.herokuapp.com"
+      "url": "http://localhost:3000"
     }
   ],
   "components": {

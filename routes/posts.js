@@ -17,36 +17,56 @@ const s3 = new AWS.S3(AWS_config.config, {
 
 const upload = multer({
   fileFilter: function (req, file, callback) {
-    var ext = path.extname(file.originalname);
-    if (ext !== ".mp3" && ext !== ".m4a") {
+    const ext = path.extname(file.originalname);
+    if (file.fieldname == "audio_file" && ext !== ".mp3" && ext !== ".m4a") {
       const wrongFileTypeError = new Error(
         "Only .mp3 and .m4a file is allowed"
       );
       wrongFileTypeError.name = "wrongFileTypeError";
       return callback(wrongFileTypeError);
+    } else if (
+      file.fieldname == "post_art" &&
+      ext !== ".png" &&
+      ext !== ".jpg" &&
+      ext !== ".jpeg"
+    ) {
+      const wrongFileTypeError = new Error(
+        "Only .png and .jpg and .jpeg file is allowed"
+      );
+      wrongFileTypeError.name = "wrongFileTypeError";
+      return callback(wrongFileTypeError);
+    } else {
+      callback(null, true);
     }
-    callback(null, true);
   },
   // limits: {
   //   fileSize: 1024 * 1024,
   // },
   storage: multerS3({
     s3: s3,
-    bucket: process.env.AWS_VOICE_BUCKET,
+    bucket: function (req, file, cb) {
+      if (file.fieldname == "audio_file") {
+        cb(null, process.env.AWS_VOICE_BUCKET);
+      } else if (file.fieldname == "post_art") {
+        cb(null, process.env.AWS_POST_ART_BUCKET);
+      } else {
+        cb(
+          new Error("Not a valid field name"),
+          process.env.AWS_POST_ART_BUCKET
+        );
+      }
+    },
     acl: "public-read",
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
     key: function (req, file, cb) {
-      cb(null, Date.now().toString() + ".mp3");
+      cb(null, Date.now().toString() + path.extname(file.originalname));
     },
   }),
 });
 
-/**
- * Get post by id
- */
 router.get("/single/:id", function (req, res, next) {
   Post.findById(req.params.id)
     .populate({ path: "user", select: "-hash -salt -email" })
@@ -60,32 +80,6 @@ router.get("/single/:id", function (req, res, next) {
       next();
     });
 });
-
-// /**
-//  * Get all posts ordered by time
-//  */
-// router.get("/new", function (req, res, next) {
-//   const skip =
-//     req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
-//   let query = {};
-//   if (req.query.classId != undefined) {
-//     query = { class_id: req.query.classId };
-//   }
-
-//   Post.find(query, undefined, { skip, limit: 20 })
-//     .populate("class_id")
-//     .populate("votes")
-//     .populate({ path: "user", select: "-hash -salt -email" })
-//     .sort({ createdAt: -1 })
-//     .then((data) => res.send(data))
-//     .catch((error) => console.log(error));
-// });
-
-/**
- * return all posts ordered by time and highest votes
- * Formula is the same as the Reddit "Hot" algorithm, found here:
- * https://medium.com/hacking-and-gonzo/how-reddit-ranking-algorithms-work-ef111e33d0d9
- */
 
 function hot(score, date) {
   var order = Math.log(Math.max(Math.abs(score), 1)) / Math.LN10;
@@ -127,13 +121,26 @@ router.post(
   "/new",
   [
     passport.authenticate("jwt", { session: false }),
-    upload.single("audio_file"),
+    upload.fields([
+      {
+        name: "audio_file",
+        maxCount: 1,
+      },
+      {
+        name: "post_art",
+        maxCount: 1,
+      },
+    ]),
   ],
   function (req, res, next) {
+    const audio_file = req.files.audio_file[0];
+    const post_art = req.files.post_art[0];
+
     Post.create({
       caption: req.body.caption,
       user: req.user._id,
-      audio_key: req.file.location,
+      audio_key: audio_file.location,
+      art_location: post_art.location,
     })
       .then((post) => {
         Votes.create({

@@ -91,23 +91,23 @@
                     },
                     "_id": {
                       "type": "string",
-                      "example": "60136bb4a4723b3242f748e0"
+                      "example": "60160546bd5fb70015891881"
                     },
                     "createdAt": {
                       "type": "string",
-                      "example": "2021-01-29T01:58:12.381Z"
+                      "example": "2021-01-31T01:17:58.326Z"
                     },
                     "updatedAt": {
                       "type": "string",
-                      "example": "2021-01-29T01:58:12.381Z"
+                      "example": "2021-01-31T01:17:58.326Z"
                     },
                     "body": {
                       "type": "string",
-                      "example": "maidul98"
+                      "example": "Wow, I had no idea haha"
                     },
                     "post": {
                       "type": "string",
-                      "example": "600fae1ed984192830e4474d"
+                      "example": "60160529bd5fb7001589187f"
                     },
                     "user": {
                       "required": [
@@ -138,6 +138,58 @@
                         "createdAt": {
                           "type": "string",
                           "example": "2021-01-26T05:50:57.746Z"
+                        },
+                        "__v": {
+                          "type": "number",
+                          "example": 0
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "__v": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "votes": {
+                      "required": [
+                        "upvoters",
+                        "downvoters",
+                        "voteCounts",
+                        "_id",
+                        "vote_on_id",
+                        "createdAt",
+                        "__v"
+                      ],
+                      "properties": {
+                        "upvoters": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": ["600fadc1d984192830e4473a"]
+                        },
+                        "downvoters": {
+                          "type": "array",
+                          "items": {
+                            "type": "undefined"
+                          },
+                          "example": []
+                        },
+                        "voteCounts": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "60160546bd5fb70015891882"
+                        },
+                        "vote_on_id": {
+                          "type": "string",
+                          "example": "60160546bd5fb70015891881"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2021-01-31T01:17:58.361Z"
                         },
                         "__v": {
                           "type": "number",
@@ -531,13 +583,164 @@
         "security": [{ "authorization": [] }]
       }
     },
-    "/replies/{id}": {
+    "/replies/{comment_id}": {
+      "get": {
+        "summary": "Get a list of replies given a comment id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "comment_id",
+            "description": "ID of the comment",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "How many to skip before returning the next batch. You get 10 replies with skip = 0, to get the next 10, set skip=10..."
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "60161366780dbd24dc651590"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "example": "2021-01-31T02:18:14.068Z"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "example": "2021-01-31T02:18:14.068Z"
+                      },
+                      "body": {
+                        "type": "string",
+                        "example": "this is reply to comment!! hehehe"
+                      },
+                      "parent": {
+                        "type": "string",
+                        "example": "60160546bd5fb70015891881"
+                      },
+                      "user": {
+                        "required": [
+                          "verified",
+                          "img_location",
+                          "_id",
+                          "username",
+                          "createdAt",
+                          "__v"
+                        ],
+                        "properties": {
+                          "verified": {
+                            "type": "boolean",
+                            "example": false
+                          },
+                          "img_location": {
+                            "type": "string",
+                            "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/1611807455351.jpg"
+                          },
+                          "_id": {
+                            "type": "string",
+                            "example": "600fadc1d984192830e4473a"
+                          },
+                          "username": {
+                            "type": "string",
+                            "example": "maidul98"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2021-01-26T05:50:57.746Z"
+                          },
+                          "__v": {
+                            "type": "number",
+                            "example": 0
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "replying_to_user": {
+                        "required": [
+                          "verified",
+                          "img_location",
+                          "_id",
+                          "username",
+                          "createdAt",
+                          "__v"
+                        ],
+                        "properties": {
+                          "verified": {
+                            "type": "boolean",
+                            "example": false
+                          },
+                          "img_location": {
+                            "type": "string",
+                            "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/1611807455351.jpg"
+                          },
+                          "_id": {
+                            "type": "string",
+                            "example": "600fadc1d984192830e4473a"
+                          },
+                          "username": {
+                            "type": "string",
+                            "example": "maidul98"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2021-01-26T05:50:57.746Z"
+                          },
+                          "__v": {
+                            "type": "number",
+                            "example": 0
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "__v": {
+                        "type": "number",
+                        "example": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Something went wrong, please try again"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Replies"],
+        "security": [{ "authorization": [] }]
+      }
+    },
+    "/replies/new/{id}": {
       "post": {
+        "summary": "Add a new reply",
         "parameters": [
           {
             "in": "path",
             "name": "id",
-            "description": "ID of the Comment or the Reply to respond to",
+            "description": "ID of the parent comment",
             "required": true,
             "schema": { "type": "string" }
           }
@@ -551,12 +754,139 @@
                   "body": {
                     "type": "string",
                     "example": "this is a comment",
-                    "description": "The text of the response"
+                    "description": "This reply body"
                   },
-                  "response_type": {
-                    "type": "stirng",
-                    "example": "comment",
-                    "description": "You can respond to a Comment or a Reply. Specify either 'comment' or 'reply'"
+                  "replying_to_user": {
+                    "type": "string",
+                    "example": "600fadc1d984192830e4473a",
+                    "description": "The user id this user is replying to"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "60161366780dbd24dc651590"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2021-01-31T02:18:14.068Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "example": "2021-01-31T02:18:14.068Z"
+                    },
+                    "body": {
+                      "type": "string",
+                      "example": "this is reply to comment!! hehehe"
+                    },
+                    "parent": {
+                      "type": "string",
+                      "example": "60160546bd5fb70015891881"
+                    },
+                    "user": {
+                      "required": [
+                        "verified",
+                        "img_location",
+                        "_id",
+                        "username",
+                        "createdAt",
+                        "__v"
+                      ],
+                      "properties": {
+                        "verified": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "img_location": {
+                          "type": "string",
+                          "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/1611807455351.jpg"
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "600fadc1d984192830e4473a"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "maidul98"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2021-01-26T05:50:57.746Z"
+                        },
+                        "__v": {
+                          "type": "number",
+                          "example": 0
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "replying_to_user": {
+                      "required": [
+                        "verified",
+                        "img_location",
+                        "_id",
+                        "username",
+                        "createdAt",
+                        "__v"
+                      ],
+                      "properties": {
+                        "verified": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "img_location": {
+                          "type": "string",
+                          "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/1611807455351.jpg"
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "600fadc1d984192830e4473a"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "maidul98"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2021-01-26T05:50:57.746Z"
+                        },
+                        "__v": {
+                          "type": "number",
+                          "example": 0
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "__v": {
+                      "type": "number",
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Couldn't delete your post, please try again"
+                    }
                   }
                 }
               }
@@ -1240,7 +1570,12 @@
                 "type": "object",
                 "properties": {
                   "audio_file": {
-                    "description": "The audio file to upload. Must be in mp3 format.",
+                    "description": "The audio file to upload. Must be in mp3/m4a format.",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "post_art": {
+                    "description": "The post art file to upload. Must be in jpg/png/jpeg format.",
                     "type": "string",
                     "format": "binary"
                   },
@@ -1249,7 +1584,7 @@
                     "type": "string"
                   }
                 },
-                "required": ["audio_file", "caption"]
+                "required": ["audio_file", "caption", "post_art"]
               }
             }
           },
@@ -1264,56 +1599,89 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "comments_count": { "type": "number", "example": 0 },
+                    "art_location": {
+                      "type": "string",
+                      "example": "https://audio-social-network-post-art.s3.us-east-2.amazonaws.com/1612064933982.jpg"
+                    },
+                    "comments_count": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "is_deleted": {
+                      "type": "boolean",
+                      "example": false
+                    },
                     "_id": {
                       "type": "string",
-                      "example": "600d10bfea27206a4550fac8"
+                      "example": "601628a7c345e42c03490b9c"
                     },
                     "caption": {
                       "type": "string",
-                      "example": "rant about ECE"
+                      "example": "The time i went to rome and almost died"
                     },
                     "user": {
                       "type": "string",
-                      "example": "6009a830d3d378157dcd4320"
+                      "example": "600fadc1d984192830e4473a"
                     },
                     "audio_key": {
                       "type": "string",
-                      "example": "1611468989411.mp3"
+                      "example": "https://audio-social-network.s3.us-east-2.amazonaws.com/1612064933971.mp3"
                     },
                     "createdAt": {
                       "type": "string",
-                      "example": "2021-01-24T06:16:31.019Z"
+                      "example": "2021-01-31T03:48:55.584Z"
                     },
-                    "__v": { "type": "number", "example": 0 },
+                    "__v": {
+                      "type": "number",
+                      "example": 0
+                    },
                     "votes": {
-                      "type": "object",
+                      "required": [
+                        "upvoters",
+                        "downvoters",
+                        "voteCounts",
+                        "_id",
+                        "vote_on_id",
+                        "createdAt",
+                        "__v"
+                      ],
                       "properties": {
                         "upvoters": {
                           "type": "array",
-                          "items": { "type": "string" },
-                          "example": ["6009a830d3d378157dcd4320"]
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": ["600fadc1d984192830e4473a"]
                         },
                         "downvoters": {
                           "type": "array",
-                          "items": {},
-                          "example": [null]
+                          "items": {
+                            "type": "undefined"
+                          },
+                          "example": []
                         },
-                        "voteCounts": { "type": "number", "example": 1 },
+                        "voteCounts": {
+                          "type": "number",
+                          "example": 1
+                        },
                         "_id": {
                           "type": "string",
-                          "example": "600d10bfea27206a4550fac9"
+                          "example": "601628a7c345e42c03490b9d"
                         },
-                        "post": {
+                        "vote_on_id": {
                           "type": "string",
-                          "example": "600d10bfea27206a4550fac8"
+                          "example": "601628a7c345e42c03490b9c"
                         },
                         "createdAt": {
                           "type": "string",
-                          "example": "2021-01-24T06:16:31.060Z"
+                          "example": "2021-01-31T03:48:55.625Z"
                         },
-                        "__v": { "type": "number", "example": 0 }
-                      }
+                        "__v": {
+                          "type": "number",
+                          "example": 0
+                        }
+                      },
+                      "type": "object"
                     }
                   }
                 }

@@ -11,8 +11,7 @@ const PostSchema = new mongoose.Schema({
   },
   art_location: {
     type: String,
-    default:
-      "https://audio-social-network-post-art.s3.us-east-2.amazonaws.com/default.jpg",
+    required: true,
   },
   votes: {
     type: mongoose.Types.ObjectId,

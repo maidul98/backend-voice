@@ -6,10 +6,11 @@ const Votes = mongoose.model("Vote");
 const passport = require("passport");
 const utils = require("../lib/utils");
 const multer = require("multer");
-const multerS3 = require("multer-s3");
+const multerS3 = require("multer-s3-transform");
 const AWS = require("aws-sdk");
 const path = require("path");
 const AWS_config = require("../config/aws.js");
+const sharp = require("sharp");
 
 const s3 = new AWS.S3(AWS_config.config, {
   signatureVersion: "v4",
@@ -56,6 +57,20 @@ const upload = multer({
         );
       }
     },
+    shouldTransform: function (req, file, cb) {
+      cb(null, /^image/i.test(file.mimetype));
+    },
+    transforms: [
+      {
+        id: "resized and compressed",
+        transform: function (req, file, cb) {
+          cb(null, sharp().resize(300).jpeg({ quality: 77 }));
+        },
+        key: function (req, file, cb) {
+          cb(null, Date.now().toString() + ".jpeg");
+        },
+      },
+    ],
     acl: "public-read",
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: function (req, file, cb) {
@@ -134,7 +149,7 @@ router.post(
   ],
   function (req, res, next) {
     const audio_file = req.files.audio_file[0];
-    const post_art = req.files.post_art[0];
+    const post_art = req.files.post_art[0].transforms[0];
 
     Post.create({
       caption: req.body.caption,
@@ -162,7 +177,7 @@ router.post(
             });
         });
       })
-      .catch((error) => {
+      .catch((err) => {
         if (err.name == "ValidationError") {
           res.status(422).json(err);
         } else {

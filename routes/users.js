@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const router = require("express").Router();
 const User = mongoose.model("User");
+const Post = mongoose.model("Post");
 const passport = require("passport");
 const utils = require("../lib/utils");
 const multer = require("multer");
@@ -219,6 +220,26 @@ router.post(
     ).then((user) => {
       res.json({ msg: "Your profile image has been updated" });
     });
+  }
+);
+
+router.get(
+  "/my-feed",
+  passport.authenticate("jwt", { session: false }),
+  function (req, res, next) {
+    const skip =
+      req.query.skip && /^\d+$/.test(req.query.skip)
+        ? Number(req.query.skip)
+        : 0;
+
+    Post.find({ user: req.user._id }, undefined, { skip, limit: 5 })
+      .populate("votes")
+      .populate({ path: "user", select: "-hash -salt -email" })
+      .sort({ createdAt: -1 })
+      .then((posts) => {
+        res.send(posts);
+      })
+      .catch((error) => next(error));
   }
 );
 

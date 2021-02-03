@@ -347,6 +347,40 @@
         "security": [{ "authorization": [] }]
       }
     },
+    "/users/my-feed": {
+      "get": {
+        "summary": "Get a list of posts the user made in descending order",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "How many to skip before returning the next batch. You get x posts with skip = 0, to get the next set of x posts, set skip=x..."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of posts"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Something went wrong, please try again"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Profile"],
+        "security": [{ "authorization": [] }]
+      }
+    },
     "/comments/sort/best/{post_id}": {
       "get": {
         "summary": "Get a list of comments of a post ordered by time: newest first",

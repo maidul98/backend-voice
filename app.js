@@ -17,6 +17,7 @@ require("./models/Post");
 require("./models/Vote");
 require("./models/Comment");
 require("./models/Reply");
+require("./models/RegisterToken");
 
 /**
  * -------------- OPEN API ----------------

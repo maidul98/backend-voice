@@ -10,4 +10,6 @@ router.use("/replies", require("./replies"));
 
 router.use("/votes", require("./votes"));
 
+router.use("/authentication", require("./authentication"));
+
 module.exports = router;

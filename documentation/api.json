@@ -347,6 +347,53 @@
         "security": [{ "authorization": [] }]
       }
     },
+    "/authentication/send-sms-verificacion/{phone_number}": {
+      "post": {
+        "summary": "Will send a 6 digit code to the number provided",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "phone_number",
+            "description": "A phone number formated in E. 164 format. No need to add + in front of number",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "A verification code has been sent"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Something went wrong when sending the verification code to this number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Authentication"]
+      }
+    },
     "/users/my-feed": {
       "get": {
         "summary": "Get a list of posts the user made in descending order",
@@ -1058,23 +1105,23 @@
         "security": [{ "authorization": [] }]
       }
     },
-    "/users/login": {
+    "/authentication/login/{phone_number}/{code}": {
       "post": {
         "summary": "/users/login",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": { "type": "string", "example": "maidul98" },
-                  "password": { "type": "string", "example": "******" }
-                }
-              }
-            }
+        "parameters": [
+          {
+            "in": "path",
+            "name": "phone_number",
+            "description": "A phone number formated in E. 164 format. No need to add + in front of number",
+            "schema": { "type": "number" }
           },
-          "required": true
-        },
+          {
+            "in": "path",
+            "name": "code",
+            "description": "The code sent to the user",
+            "schema": { "type": "number" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1084,40 +1131,67 @@
                   "type": "object",
                   "properties": {
                     "success": { "type": "boolean", "example": true },
+                    "type": "object",
                     "user": {
-                      "type": "object",
+                      "required": [
+                        "email_verified",
+                        "suspended",
+                        "img_location",
+                        "_id",
+                        "username",
+                        "phone_number",
+                        "email",
+                        "createdAt",
+                        "__v"
+                      ],
                       "properties": {
-                        "verified": { "type": "boolean", "example": false },
-                        "suspended": { "type": "boolean", "example": false },
+                        "email_verified": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "suspended": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "img_location": {
+                          "type": "string",
+                          "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/default.png"
+                        },
                         "_id": {
                           "type": "string",
-                          "example": "6009a830d3d378157dcd4320"
+                          "example": "601f06cf328d94bb1b699127"
                         },
-                        "username": { "type": "string", "example": "maidul98" },
-                        "hash": {
+                        "username": {
                           "type": "string",
-                          "example": "75f7a95bf74e5e432bffc5910a980793bc7369f09bb05ae930ea139861fd98256905c42b52ab66a472e97d4c80a97928c20c9edc20e019c8f65a14ef2313cbd1"
+                          "example": "maidul98q"
                         },
-                        "salt": {
+                        "phone_number": {
                           "type": "string",
-                          "example": "d8beb4864bb19099b3e21ff1d5f660695080873941e7c4d62f58dcabf8d12e9c"
+                          "example": "19292507908"
                         },
                         "email": {
                           "type": "string",
-                          "example": "maidul98@gmail.com"
+                          "example": "maidul9@gmail.com"
                         },
                         "createdAt": {
                           "type": "string",
-                          "example": "2021-01-21T16:13:36.558Z"
+                          "example": "2021-02-06T21:14:55.448Z"
                         },
-                        "__v": { "type": "number", "example": 0 }
-                      }
+                        "__v": {
+                          "type": "number",
+                          "example": 0
+                        }
+                      },
+                      "type": "object"
                     },
                     "token": {
                       "type": "string",
-                      "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDA5YTgzMGQzZDM3ODE1N2RjZDQzMjAiLCJpYXQiOjE2MTE0Mjg2OTI2OTgsImV4cCI6MTYxMTQyODc3OTA5OH0.NsaLLwwla_veHUfGodKrJs0kDL3RQb76T2K4HgY9I8RvGI-AAMnE71vBfAKil7BoYewTjDEWGdWVznpx5t6DMC_fpc0R8Gg3fPwsxnBtpixP06j_LPTocKiiqFA7nQc5aYiYbf7gHGFIV5PXPd5tySdQxFOlwdAA85KkW7d2WQTNfRwHn_IoDIM5_8XWlWq_WhezpjDVQgjohIL7e2VG-wtPQpg1V-uh-tMcDbQcFFzLadEaUQdjRQ0TtCsN2w0-TVozz-LDYd0tBt82dGJCeIW-IuARvT4flQhgAI432bKD3D4qfXGwnu0PZVtKguV1Rr5-vePXMBiRYhoIrmXM0N-rf4DoBy3O9wFFm3dld8suwC-c5l8Avl8hMRiL3lAWbsO7yIxgS9R6LiCafjl591ZDmE-Fbb096GjiH3YAlZ8ZZOmSPhori3kZaqqCKHgy6nG80zRAKJtr8l78yNt1xFx_8FEsE1c8vtwZtn6mDmi4DRj--on31DUsdg7AQ2xDvk95w-DHWOaOH0g4eQyiYG67jiWPPdIEGMri2q6fztEi8ycNuMPH6SbGurt0C6q9VInnQMhlBDV9x3Xjpe3tFaC1ISBz5bRJuuQGyEpGE-9bifYSN79cqamzXmrkF34hUx36-osQSQ3XKqh4_DciDcZU3a78xOmqA-NHciyLC00"
+                      "example": "Bearer token"
                     },
-                    "expiresIn": { "type": "string", "example": "1d" }
+                    "expiresIn": {
+                      "type": "string",
+                      "example": "1d"
+                    }
                   }
                 }
               }
@@ -1130,10 +1204,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": false },
                     "msg": {
                       "type": "string",
                       "example": "You are not registered"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "The code you have entered has expired, please request a new one"
                     }
                   }
                 }
@@ -1144,9 +1233,23 @@
         "tags": ["Authentication"]
       }
     },
-    "/users/register": {
+    "/authentication/register/{phone_number}/{code}": {
       "post": {
-        "summary": "/users/register",
+        "summary": "Register a new user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "phone_number",
+            "description": "A phone number formated in E. 164 format. No need to add + in front of number",
+            "schema": { "type": "number" }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "description": "The code sent to the user",
+            "schema": { "type": "number" }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1154,8 +1257,7 @@
                 "type": "object",
                 "properties": {
                   "username": { "type": "string", "example": "theflyingcat99" },
-                  "password": { "type": "string", "example": "******" },
-                  "email": { "type": "string", "example": "cat98@gmail.com" }
+                  "email": { "type": "string", "example": "maidul98@gmail.com" }
                 }
               }
             }
@@ -1171,47 +1273,67 @@
                   "type": "object",
                   "properties": {
                     "success": { "type": "boolean", "example": true },
+                    "type": "object",
                     "user": {
-                      "type": "object",
+                      "required": [
+                        "email_verified",
+                        "suspended",
+                        "img_location",
+                        "_id",
+                        "username",
+                        "phone_number",
+                        "email",
+                        "createdAt",
+                        "__v"
+                      ],
                       "properties": {
-                        "verified": { "type": "boolean", "example": false },
-                        "suspended": { "type": "boolean", "example": false },
+                        "email_verified": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "suspended": {
+                          "type": "boolean",
+                          "example": false
+                        },
                         "img_location": {
                           "type": "string",
                           "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/default.png"
                         },
                         "_id": {
                           "type": "string",
-                          "example": "600e56752e03e63ed04b593e"
+                          "example": "601f06cf328d94bb1b699127"
                         },
                         "username": {
                           "type": "string",
-                          "example": "theflyingcat99"
+                          "example": "maidul98q"
                         },
-                        "hash": {
+                        "phone_number": {
                           "type": "string",
-                          "example": "4a49c9a7d9cd817b141e611648b4883155c0c62109e07f1b7ea4ff153e0258aa1c5a61bcbc2c5a4d1819c3790e6d361cba2c9736286e4ef8fdbbf41e2473b433"
-                        },
-                        "salt": {
-                          "type": "string",
-                          "example": "65c8c49add62e51bcf4fd5de3706b4705fd15710794115cafce55045aaf7e3bd"
+                          "example": "19292507908"
                         },
                         "email": {
                           "type": "string",
-                          "example": "cat98@gmail.com"
+                          "example": "maidul9@gmail.com"
                         },
                         "createdAt": {
                           "type": "string",
-                          "example": "2021-01-25T05:26:13.839Z"
+                          "example": "2021-02-06T21:14:55.448Z"
                         },
-                        "__v": { "type": "number", "example": 0 }
-                      }
+                        "__v": {
+                          "type": "number",
+                          "example": 0
+                        }
+                      },
+                      "type": "object"
                     },
                     "token": {
                       "type": "string",
-                      "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDBlNTY3NTJlMDNlNjNlZDA0YjU5M2UiLCJpYXQiOjE2MTE1NTIzNzQyMDQsImV4cCI6MTYxMTU1MjQ2MDYwNH0.ylvV_ciuDxmVR-BiJM4xJdIkgFgD8D1r6qkO1te4I6MQTEGnUEt4rawboikdJ1e6fDU6cRfpsq4HMHHfb8TcwnpJGXMeM90KdlxqOuy4ZZUdxmosN1dNnxMjJhs0H4AToPlJK9WI1_2bk6FWi4U0Mxwh3ijXb1heaYDWtXrzqN_w06aJVL0-c-n8d3ZYOA0n2iyBBs_-MNVlv8zN5MHdMhX_HdB1JZ_xHmm6oqkUVrAadX_a_En9ywFkpwps_E161JemGMT3IqhVJOY7ol_qmrQGjEg30CGszgAYrNVc-hpffOQA04g5KoBjavxo2FLrVp1St43CrYjEoaI_PduDp5eaJWiBrNQDE5gqM2jhZJCKCGqRMvcx5gMC-DyOHWzL2bqnJOIcdF6WK7_1t_ZJCpA9emCmy9RBUbOYRUJg1LWhy4e9Tsg_5i1YNJJzfHz4QgkbZaSKt1hwsD5hP0lcEfo5IN0fq1AGJYA9rUye536th2SgU7XgnplUjlB3arNy6w1Nvv0OuocdfxE5q9Pu910v7c7CvPVaWbaDAKRPUyrECNzQjh7xJj8le1dOZ2yeQgiw9U3Ncrge36UMQ32U0E6LDVl73CCn43NdRrqqGfLfn_AcepUP6JoCGVhoHU-2-3eyUSxiRW1maEJV5jKHg0Qm3-UUt0m4ZlfyzwFQlS8"
+                      "example": "Bearer token"
                     },
-                    "expiresIn": { "type": "string", "example": "1d" }
+                    "expiresIn": {
+                      "type": "string",
+                      "example": "1d"
+                    }
                   }
                 }
               }
@@ -1323,8 +1445,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -1332,7 +1454,7 @@
                   "properties": {
                     "msg": {
                       "type": "string",
-                      "example": "Something went wrong, please try again"
+                      "example": "The code you have entered has expired, please request a new one"
                     }
                   }
                 }

@@ -19,9 +19,9 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  hash: String,
-  salt: String,
-  verified: {
+  // hash: String,
+  // salt: String,
+  email_verified: {
     type: Boolean,
     default: false,
   },
@@ -31,14 +31,18 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, "Your email cannot be blank."],
     validate: [validateEmail, "Please enter a valid email"],
     unique: true,
+    required: true,
   },
   img_location: {
     type: String,
     default:
       "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/default.png",
+  },
+  phone_number: {
+    type: String,
+    required: true,
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date,

@@ -68,6 +68,7 @@ router.post(
             },
           },
           (error, result) => {
+            if (error) next(error);
             if (result.nModified > 0) {
               counterInc = 2;
             } else {
@@ -85,6 +86,7 @@ router.post(
             },
           },
           (error, result) => {
+            if (error) next(error);
             if (result.nModified > 0) {
               counterInc = -2;
             } else {
@@ -104,6 +106,7 @@ router.post(
             $addToSet: voterTypeObj,
           },
           async (error, result) => {
+            if (error) next(error);
             if (result.nModified > 0) {
               await Vote.updateOne(
                 { vote_on_id: vote_on_id },

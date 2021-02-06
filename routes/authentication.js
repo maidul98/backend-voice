@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const router = require("express").Router();
 const User = mongoose.model("User");
 const Post = mongoose.model("Post");
-const RegisterToken = mongoose.model("RegisterToken");
 const passport = require("passport");
 const utils = require("../lib/utils");
 const twilio = require("twilio");

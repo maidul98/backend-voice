@@ -347,7 +347,7 @@
         "security": [{ "authorization": [] }]
       }
     },
-    "/authentication/send-sms-verificacion/{phone_number}": {
+    "/authentication/send-otp/{phone_number}": {
       "post": {
         "summary": "Will send a 6 digit code to the number provided",
         "parameters": [
@@ -1105,9 +1105,9 @@
         "security": [{ "authorization": [] }]
       }
     },
-    "/authentication/login/{phone_number}/{code}": {
+    "/authentication/onboard/verify-otp/{phone_number}/{code}": {
       "post": {
-        "summary": "/users/login",
+        "summary": "Verify OPT during onboard",
         "parameters": [
           {
             "in": "path",
@@ -1130,63 +1130,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true },
-                    "type": "object",
-                    "user": {
-                      "required": [
-                        "email_verified",
-                        "suspended",
-                        "img_location",
-                        "_id",
-                        "username",
-                        "phone_number",
-                        "email",
-                        "createdAt",
-                        "__v"
-                      ],
-                      "properties": {
-                        "email_verified": {
-                          "type": "boolean",
-                          "example": false
-                        },
-                        "suspended": {
-                          "type": "boolean",
-                          "example": false
-                        },
-                        "img_location": {
-                          "type": "string",
-                          "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/default.png"
-                        },
-                        "_id": {
-                          "type": "string",
-                          "example": "601f06cf328d94bb1b699127"
-                        },
-                        "username": {
-                          "type": "string",
-                          "example": "maidul98q"
-                        },
-                        "phone_number": {
-                          "type": "string",
-                          "example": "19292507908"
-                        },
-                        "email": {
-                          "type": "string",
-                          "example": "maidul9@gmail.com"
-                        },
-                        "createdAt": {
-                          "type": "string",
-                          "example": "2021-02-06T21:14:55.448Z"
-                        },
-                        "__v": {
-                          "type": "number",
-                          "example": 0
-                        }
-                      },
-                      "type": "object"
-                    },
                     "token": {
                       "type": "string",
-                      "example": "Bearer token"
+                      "example": "a jtw token"
                     },
                     "expiresIn": {
                       "type": "string",
@@ -1197,8 +1143,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "400": {
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -1206,7 +1152,7 @@
                   "properties": {
                     "msg": {
                       "type": "string",
-                      "example": "You are not registered"
+                      "example": "This user already exists. If this is your account, please login"
                     }
                   }
                 }
@@ -1222,6 +1168,22 @@
                   "properties": {
                     "msg": {
                       "type": "string",
+                      "example": "The code you entered is incorrect"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Gone",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
                       "example": "The code you have entered has expired, please request a new one"
                     }
                   }
@@ -1230,34 +1192,27 @@
             }
           }
         },
-        "tags": ["Authentication"]
+        "tags": ["Sign up"]
       }
     },
-    "/authentication/register/{phone_number}/{code}": {
+    "/authentication/onboard/register-username": {
       "post": {
-        "summary": "Register a new user",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "phone_number",
-            "description": "A phone number formated in E. 164 format. No need to add + in front of number",
-            "schema": { "type": "number" }
-          },
-          {
-            "in": "path",
-            "name": "code",
-            "description": "The code sent to the user",
-            "schema": { "type": "number" }
-          }
-        ],
+        "summary": "Register new user with username",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "username": { "type": "string", "example": "theflyingcat99" },
-                  "email": { "type": "string", "example": "maidul98@gmail.com" }
+                  "onboard_token": {
+                    "type": "string",
+                    "example": "jtw token",
+                    "description": "The token received after verifying phone number"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "maidul98"
+                  }
                 }
               }
             }
@@ -1328,7 +1283,7 @@
                     },
                     "token": {
                       "type": "string",
-                      "example": "Bearer token"
+                      "example": "Bearer {token}"
                     },
                     "expiresIn": {
                       "type": "string",
@@ -1388,46 +1343,6 @@
                               "example": "theflyingcat98"
                             }
                           }
-                        },
-                        "email": {
-                          "type": "object",
-                          "properties": {
-                            "message": {
-                              "type": "string",
-                              "example": "Error, expected `email` to be unique. Value: `cat98@gmail.com`"
-                            },
-                            "name": {
-                              "type": "string",
-                              "example": "ValidatorError"
-                            },
-                            "properties": {
-                              "type": "object",
-                              "properties": {
-                                "message": {
-                                  "type": "string",
-                                  "example": "Error, expected `email` to be unique. Value: `cat98@gmail.com`"
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "example": "unique"
-                                },
-                                "path": {
-                                  "type": "string",
-                                  "example": "email"
-                                },
-                                "value": {
-                                  "type": "string",
-                                  "example": "cat98@gmail.com"
-                                }
-                              }
-                            },
-                            "kind": { "type": "string", "example": "unique" },
-                            "path": { "type": "string", "example": "email" },
-                            "value": {
-                              "type": "string",
-                              "example": "cat98@gmail.com"
-                            }
-                          }
                         }
                       }
                     },
@@ -1454,7 +1369,7 @@
                   "properties": {
                     "msg": {
                       "type": "string",
-                      "example": "The code you have entered has expired, please request a new one"
+                      "example": "Your session has expired, please start over"
                     }
                   }
                 }
@@ -1462,7 +1377,7 @@
             }
           }
         },
-        "tags": ["Authentication"]
+        "tags": ["Sign up"]
       }
     },
     "/users/password-reset/{token}": {
@@ -1509,6 +1424,223 @@
         },
         "tags": ["Authentication"],
         "description": ""
+      }
+    },
+    "/authentication/login/{phone_number}/{code}": {
+      "post": {
+        "summary": "Login in with phone number and code",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "phone_number",
+            "description": "A phone number formated in E. 164 format. No need to add + in front of number",
+            "schema": { "type": "number" }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "description": "The code sent to the user",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "type": "object",
+                    "user": {
+                      "required": [
+                        "email_verified",
+                        "suspended",
+                        "img_location",
+                        "_id",
+                        "username",
+                        "phone_number",
+                        "email",
+                        "createdAt",
+                        "__v"
+                      ],
+                      "properties": {
+                        "email_verified": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "suspended": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "img_location": {
+                          "type": "string",
+                          "example": "https://audio-social-network-profiles.s3.us-east-2.amazonaws.com/default.png"
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "601f06cf328d94bb1b699127"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "maidul98q"
+                        },
+                        "phone_number": {
+                          "type": "string",
+                          "example": "19292507908"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "maidul9@gmail.com"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2021-02-06T21:14:55.448Z"
+                        },
+                        "__v": {
+                          "type": "number",
+                          "example": 0
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "Bearer {token}"
+                    },
+                    "expiresIn": {
+                      "type": "string",
+                      "example": "1d"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "You are not registered yet, please sign up!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Gone",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "The code you have entered has expired, please request a new one"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Gone",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "The code you entered is incorrect"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "tags": ["Sign in"],
+        "description": ""
+      }
+    },
+    "/authentication/onboard/check-username/{username}": {
+      "post": {
+        "summary": "Check if username is taken",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "description": "The username to check",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "onboard_token": {
+                    "type": "string",
+                    "example": "jtw token",
+                    "description": "The token received after verifying phone number"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "This username is taken"
+                    },
+                    "taken": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "Your session has expired, please start over"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Sign up"],
+        "description": "Once the user requests a password reset, the user will be sent a email. The email will conatin a link to reset the password which will expire in one hour."
       }
     },
     "/users/request-password-reset/{username}": {
@@ -1947,6 +2079,8 @@
   },
   "tags": [
     { "name": "Authentication" },
+    { "name": "Sign in" },
+    { "name": "Sign up" },
     { "name": "Profile" },
     { "name": "Post" },
     { "name": "Comment" },

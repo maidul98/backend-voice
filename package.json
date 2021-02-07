@@ -43,8 +43,6 @@
     "passport-jwt": "^4.0.0",
     "passport-twitter": "^1.0.4",
     "sharp": "^0.27.1",
-    "socket.io": "^2.4.1",
-    "swagger-jsdoc": "^6.0.2",
     "swagger-ui-express": "^4.1.6",
     "tslib": "^2.1.0",
     "twilio": "^3.51.0"

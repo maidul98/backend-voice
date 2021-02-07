@@ -29,12 +29,12 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  email: {
-    type: String,
-    validate: [validateEmail, "Please enter a valid email"],
-    unique: true,
-    required: true,
-  },
+  // email: {
+  //   type: String,
+  //   validate: [validateEmail, "Please enter a valid email"],
+  //   unique: true,
+  //   required: true,
+  // },
   img_location: {
     type: String,
     default:
@@ -43,6 +43,7 @@ const UserSchema = new mongoose.Schema({
   phone_number: {
     type: String,
     required: true,
+    unique: true,
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date,

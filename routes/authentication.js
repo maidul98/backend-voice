@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const router = require("express").Router();
 const User = mongoose.model("User");
 const Post = mongoose.model("Post");
+const OnBoard = mongoose.model("OnBoard");
 const passport = require("passport");
 const utils = require("../lib/utils");
 const twilio = require("twilio");
@@ -11,7 +12,7 @@ var twilioClient = new twilio(
   { lazyLoading: true }
 );
 
-router.post("/send-sms-verificacion/:phone_number", function (req, res, next) {
+router.post("/send-otp/:phone_number", function (req, res, next) {
   twilioClient.verify
     .services(process.env.TWILIO_SID)
     .verifications.create({ to: "+" + req.params.phone_number, channel: "sms" })
@@ -29,12 +30,20 @@ router.post("/send-sms-verificacion/:phone_number", function (req, res, next) {
 
 router.post("/login/:phone_number/:code", async function (req, res, next) {
   try {
-    const user = await User.findOne({ phone_number: req.params.phone_number });
+    const onboardExists = await User.findOne({
+      phone_number: req.params.phone_number,
+    }).countDocuments((limit = 1));
+    const user = await User.findOne({
+      phone_number: req.params.phone_number,
+    });
 
-    if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, msg: "You are not registered" });
+    console.log(user);
+
+    if (!onboardExists) {
+      return res.status(401).json({
+        success: false,
+        msg: "You are not registered yet, please sign up!",
+      });
     }
 
     const verification = await twilioClient.verify
@@ -52,58 +61,137 @@ router.post("/login/:phone_number/:code", async function (req, res, next) {
         expiresIn: jwt.expires,
       });
     } else {
-      res.status(401).json({ msg: "The code you entered is incorrect" });
+      res.status(422).json({ msg: "The code you entered is incorrect" });
       next();
     }
   } catch (error) {
-    return res.status(422).send({
+    return res.status(410).send({
       msg: "The code you have entered has expired, please request a new one",
     });
   }
 });
 
-router.post("/register/:phone_number/:code", async function (req, res, next) {
-  try {
-    const newUser = new User({
-      username: req.body.username,
-      phone_number: req.params.phone_number,
-      email: req.body.email,
-    });
+/**
+ * Will send token only if the code is valid and the phone number isn't yet asisged to a user
+ */
+router.post(
+  "/onboard/verify-otp/:phone_number/:code",
+  async function (req, res, next) {
+    try {
+      const userWithThisPhoneNum = await User.find({
+        phone_number: req.params.phone_number,
+      }).countDocuments((limit = 1));
 
-    var user = await newUser.save();
+      if (userWithThisPhoneNum)
+        return res.status(400).json({
+          msg:
+            "This user already exists. If this is your account, please login",
+        });
 
-    const verification = await twilioClient.verify
-      .services(process.env.TWILIO_SID)
-      .verificationChecks.create({
-        to: "+" + req.params.phone_number,
-        code: req.params.code,
+      const verification = await twilioClient.verify
+        .services(process.env.TWILIO_SID)
+        .verificationChecks.create({
+          to: "+" + req.params.phone_number,
+          code: req.params.code,
+        });
+
+      if (verification.status == "approved") {
+        const onBoard = await OnBoard.findOneAndUpdate(
+          { phone_number: req.params.phone_number },
+          { phone_number: req.params.phone_number },
+          { upsert: true }
+        );
+
+        // get JTW without Bear
+        const jwt = utils.issueJWT(onBoard, "");
+        return res.json({
+          token: jwt.token,
+          expiresIn: jwt.expires,
+        });
+      } else {
+        return res
+          .status(422)
+          .json({ msg: "The code you entered is incorrect" });
+      }
+    } catch (error) {
+      res.status(422).json({
+        msg: "The code you have entered has expired, please request a new one",
       });
+    }
+  }
+);
 
-    if (verification.status == "approved") {
-      const jwt = utils.issueJWT(user);
-      res.json({
-        success: true,
-        user: user,
-        token: jwt.token,
-        expiresIn: jwt.expires,
+router.post("/onboard/check-username/:username", async (req, res, next) => {
+  try {
+    const payload = utils.verifyJWT(req.body.onboard_token);
+    const onboard_id = payload.sub;
+    const onboardExists = await OnBoard.findOne({
+      _id: onboard_id,
+    }).countDocuments((limit = 1));
+    if (!onboardExists)
+      return res
+        .status(401)
+        .json({ msg: "Your session has expired, please start over" });
+
+    const userNameExists = await User.findOne({
+      username: req.params.username,
+    }).countDocuments((limit = 1));
+
+    if (userNameExists) {
+      res.send({ msg: "This username is taken", taken: true });
+    } else {
+      res.send({ msg: "This username is all yours", taken: false });
+    }
+  } catch (error) {
+    if (error.name == "JsonWebTokenError") {
+      return res.status(401).json({
+        msg: "Your session has expired, please start over",
       });
     } else {
-      return res.status(422).json({ msg: "The code you entered is incorrect" });
+      next(error);
     }
+  }
+  res.send(req.user);
+  next();
+});
+
+router.post("/onboard/register-username", async function (req, res, next) {
+  try {
+    const payload = utils.verifyJWT(req.body.onboard_token);
+    const onboard_id = payload.sub;
+    const onboardCollection = OnBoard.findOne({ _id: onboard_id });
+    const onboardObject = await onboardCollection;
+    const onboardExists = await onboardCollection.countDocuments((limit = 1));
+    if (!onboardExists)
+      return res
+        .status(401)
+        .json({ msg: "Your session has expired, please start over" });
+
+    const newUser = new User({
+      username: req.body.username,
+      phone_number: onboardObject.phone_number,
+    });
+
+    const user = await newUser.save();
+    const jwt = utils.issueJWT(newUser); // with bear prefix
+    res.json({
+      success: true,
+      user: user,
+      token: jwt.token,
+      expiresIn: jwt.expires,
+    });
+    await OnBoard.findByIdAndDelete({ _id: onboardObject._id });
   } catch (error) {
     console.log(error);
     if (error.name == "ValidationError") {
-      res.status(422).json(error);
+      return res.status(422).json(error);
+    } else if (error.name == "JsonWebTokenError") {
+      return res.status(401).json({
+        msg: "Your session has expired, please start over",
+      });
     } else {
-      // remove the account created
-      await User.remove(
-        { _id: user._id },
-        {
-          justOne: true,
-        }
-      );
-      res.status(422).json({
-        msg: "The code you have entered has expired, please request a new one",
+      return res.status(500).json({
+        msg: "Something went wrong. Please try again later",
       });
     }
   }

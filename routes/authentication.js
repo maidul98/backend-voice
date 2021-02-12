@@ -95,15 +95,17 @@ router.post(
           code: req.params.code,
         });
 
+      console.log(req.params.code);
+      console.log(verification);
+
       if (verification.status == "approved") {
         const onBoard = await OnBoard.findOneAndUpdate(
           { phone_number: req.params.phone_number },
           { phone_number: req.params.phone_number },
-          { upsert: true }
+          { upsert: true, new: true }
         );
 
-        // get JTW without Bear
-        const jwt = utils.issueJWT(onBoard, "");
+        const jwt = utils.issueJWT(onBoard, ""); // get JTW without Bear
         return res.json({
           token: jwt.token,
           expiresIn: jwt.expires,
@@ -114,6 +116,7 @@ router.post(
           .json({ msg: "The code you entered is incorrect" });
       }
     } catch (error) {
+      console.log(error);
       res.status(422).json({
         msg: "The code you have entered has expired, please request a new one",
       });

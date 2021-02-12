@@ -49,7 +49,8 @@ const UserSchema = new mongoose.Schema({
   resetPasswordExpires: Date,
 });
 
-UserSchema.plugin(uniqueValidator),
-  { message: "{ message: '{PATH} must be unique' }" };
+UserSchema.plugin(uniqueValidator, {
+  message: "{VALUE} is taken",
+});
 
 mongoose.model("User", UserSchema);

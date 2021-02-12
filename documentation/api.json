@@ -1302,25 +1302,32 @@
                   "type": "object",
                   "properties": {
                     "errors": {
-                      "type": "object",
+                      "required": ["username"],
                       "properties": {
                         "username": {
-                          "type": "object",
+                          "required": [
+                            "name",
+                            "message",
+                            "properties",
+                            "kind",
+                            "path",
+                            "value"
+                          ],
                           "properties": {
-                            "message": {
-                              "type": "string",
-                              "example": "Error, expected `username` to be unique. Value: `theflyingcat98`"
-                            },
                             "name": {
                               "type": "string",
                               "example": "ValidatorError"
                             },
+                            "message": {
+                              "type": "string",
+                              "example": "maidul99 is taken"
+                            },
                             "properties": {
-                              "type": "object",
+                              "required": ["message", "type", "path", "value"],
                               "properties": {
                                 "message": {
                                   "type": "string",
-                                  "example": "Error, expected `username` to be unique. Value: `theflyingcat98`"
+                                  "example": "maidul99 is taken"
                                 },
                                 "type": {
                                   "type": "string",
@@ -1332,29 +1339,41 @@
                                 },
                                 "value": {
                                   "type": "string",
-                                  "example": "theflyingcat98"
+                                  "example": "maidul99"
                                 }
-                              }
+                              },
+                              "type": "object"
                             },
-                            "kind": { "type": "string", "example": "unique" },
-                            "path": { "type": "string", "example": "username" },
+                            "kind": {
+                              "type": "string",
+                              "example": "unique"
+                            },
+                            "path": {
+                              "type": "string",
+                              "example": "username"
+                            },
                             "value": {
                               "type": "string",
-                              "example": "theflyingcat98"
+                              "example": "maidul99"
                             }
-                          }
+                          },
+                          "type": "object"
                         }
-                      }
+                      },
+                      "type": "object"
                     },
                     "_message": {
                       "type": "string",
                       "example": "User validation failed"
                     },
+                    "name": {
+                      "type": "string",
+                      "example": "ValidationError"
+                    },
                     "message": {
                       "type": "string",
-                      "example": "User validation failed: username: Error, expected `username` to be unique. Value: `theflyingcat98`, email: Error, expected `email` to be unique. Value: `cat98@gmail.com`"
-                    },
-                    "name": { "type": "string", "example": "ValidationError" }
+                      "example": "User validation failed: username: maidul99 is taken"
+                    }
                   }
                 }
               }

@@ -12,7 +12,12 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async function (req, res, next) {
     try {
-      const parent = await Comment.findById(req.params.id);
+      const parent = await Comment.findOneAndUpdate(
+        { _id: req.params.id },
+        { $inc: { repliesCount: 1 } },
+        { upsert: false, new: true }
+      );
+
       const replying_to_user = await User.findById({
         _id: req.body.replying_to_user,
       });

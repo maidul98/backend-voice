@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 Notification = new mongoose.Schema({
   sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Notification creator
   receiver: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Ids of the receivers of the notification
-  message: String, // any description of the notification message
+  message: String, // description of the notification message
   read_by: [
     {
       readerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

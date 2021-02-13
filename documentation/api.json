@@ -79,7 +79,7 @@
     },
     "/users/user": {
       "get": {
-        "summary": "/users/user",
+        "summary": "Get the current logged in user ",
         "responses": {
           "200": {
             "description": "OK",

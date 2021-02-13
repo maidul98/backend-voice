@@ -12,4 +12,8 @@ router.use("/votes", require("./votes"));
 
 router.use("/authentication", require("./authentication"));
 
+router.use("/notifications", require("./notifications"));
+
+router.use("/devices", require("./devices"));
+
 module.exports = router;

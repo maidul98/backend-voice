@@ -7,6 +7,7 @@ const mkdirp = require("mkdirp");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const swaggerUI = require("swagger-ui-express");
+const admin = require("firebase-admin");
 var app = express();
 
 /**
@@ -18,6 +19,8 @@ require("./models/Vote");
 require("./models/Comment");
 require("./models/Reply");
 require("./models/OnBoard");
+require("./models/Notification");
+require("./models/Device");
 
 /**
  * -------------- OPEN API ----------------
@@ -80,6 +83,24 @@ if (process.env.NODE_ENV === "production") {
 }
 
 /**
+ * -------------- FIRE BASE NOTIFICATIONS ----------------
+ */
+const serviceAccount = JSON.parse(
+  fs.readFileSync(
+    "config/voice-app-303802-firebase-adminsdk-g9qw3-b9727cd112.json",
+    { encoding: "utf-8" }
+  )
+);
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+/**
+ * -------------- SERVER ----------------
+ */
+
+/**
  * Default error handler
  */
 app.use(function (err, req, res, next) {
@@ -90,9 +111,5 @@ app.use(function (err, req, res, next) {
     res.status(500).json({ msg: "Something went wrong, please try again" });
   }
 });
-
-/**
- * -------------- SERVER ----------------
- */
 
 const server = app.listen(process.env.PORT || 3000);

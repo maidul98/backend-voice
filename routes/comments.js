@@ -6,6 +6,7 @@ const Comment = mongoose.model("Comment");
 const Votes = mongoose.model("Vote");
 const Post = mongoose.model("Post");
 const Math = require("mathjs");
+const notificaionModule = require("../modules/notificaions");
 
 router.post(
   "/:post_id",
@@ -17,7 +18,6 @@ router.post(
       new_comment.body = req.body.body;
       new_comment.post = post._id;
       new_comment.user = req.user._id;
-
       await new_comment.save();
 
       const newVotes = await Votes.create({
@@ -42,6 +42,7 @@ router.post(
         })
         .populate("votes");
 
+      // notificaionModule.sendNotificaion(sd)
       res.send(populated_comment);
     } catch (err) {
       if (err.name != undefined && err.name == "ValidationError") {

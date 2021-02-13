@@ -63,6 +63,24 @@ router.get(
   }
 );
 
+router.get(
+  "/user/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    User.findOne({ _id: req.params.id })
+      .then((user) => {
+        if (!user) {
+          res.status(500).json({ msg: "User not found" });
+        } else {
+          res.json(user);
+        }
+      })
+      .catch((error) => {
+        next(error);
+      });
+  }
+);
+
 router.post("/password-reset/:token", function (req, res, next) {
   User.findOne({
     resetPasswordToken: req.params.token,
@@ -153,15 +171,14 @@ router.post(
 );
 
 router.get(
-  "/my-feed",
+  "/user-feed/:id",
   passport.authenticate("jwt", { session: false }),
   function (req, res, next) {
     const skip =
       req.query.skip && /^\d+$/.test(req.query.skip)
         ? Number(req.query.skip)
         : 0;
-
-    Post.find({ user: req.user._id }, undefined, { skip, limit: 5 })
+    Post.find({ user: req.params.id }, undefined, { skip, limit: 5 })
       .populate("votes")
       .populate({ path: "user", select: "-hash -salt -email" })
       .sort({ createdAt: -1 })

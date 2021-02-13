@@ -85,13 +85,6 @@ if (process.env.NODE_ENV === "production") {
 /**
  * -------------- FIRE BASE NOTIFICATIONS ----------------
  */
-const serviceAccount = JSON.parse(
-  fs.readFileSync(
-    "config/voice-app-303802-firebase-adminsdk-g9qw3-b9727cd112.json",
-    { encoding: "utf-8" }
-  )
-);
-
 admin.initializeApp({
   credential: admin.credential.cert({
     type: "service_account",

@@ -7,9 +7,9 @@ const Notification = mongoose.model("Notification");
  * Send a notificaions to a user(s) with a message and a title.
  * Returns a promise of the status
  */
-function sendNotificaion(senderId, receiverId, body, title, callback) {
+function sendNotificaion(senderId, receiverId, body, title) {
   return new Promise((resolutionFunc, rejectionFunc) => {
-    Device.findOne({ user: receiverId }).then((devices) => {
+    Device.findOne({ user: receiverId }).then((device) => {
       if (!device)
         return rejectionFunc(new Error("User device info not found"));
       const payload = {
@@ -28,7 +28,11 @@ function sendNotificaion(senderId, receiverId, body, title, callback) {
             receiver: receiverId,
             message: body,
           })
-            .then(() => resolutionFunc(response))
+            .then(() => {
+              console.log("sent");
+              console.log(response);
+              resolutionFunc(response);
+            })
             .catch((error) => rejectionFunc(error));
         })
         .catch(function (error) {

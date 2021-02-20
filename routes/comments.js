@@ -13,6 +13,7 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async function (req, res, next) {
     try {
+      console.log("woooohoo");
       const post = await Post.findById(req.params.post_id);
       const new_comment = new Comment();
       new_comment.body = req.body.body;
@@ -42,7 +43,12 @@ router.post(
         })
         .populate("votes");
 
-      // notificaionModule.sendNotificaion(sd)
+      await notificaionModule.sendNotificaion(
+        req.user._id,
+        req.user._id,
+        "comment",
+        "titlee"
+      );
       res.send(populated_comment);
     } catch (err) {
       if (err.name != undefined && err.name == "ValidationError") {

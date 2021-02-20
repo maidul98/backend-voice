@@ -14,7 +14,7 @@ router.post(
   async function (req, res, next) {
     try {
       console.log("woooohoo");
-      const post = await Post.findById(req.params.post_id);
+      const post = await Post.findById(req.params.post_id).populate("user");
       const new_comment = new Comment();
       new_comment.body = req.body.body;
       new_comment.post = post._id;
@@ -45,9 +45,9 @@ router.post(
 
       await notificaionModule.sendNotificaion(
         req.user._id,
-        req.user._id,
-        "comment",
-        "titlee"
+        post.user._id,
+        req.body.body,
+        `${post.user.username} commented on your post`
       );
       res.send(populated_comment);
     } catch (err) {

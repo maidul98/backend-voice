@@ -9,15 +9,16 @@ const Notification = mongoose.model("Notification");
  */
 function sendNotificaion(senderId, receiverId, body, title) {
   return new Promise((resolutionFunc, rejectionFunc) => {
-    Device.findOne({ user: receiverId }).then((device) => {
-      if (!device)
-        return rejectionFunc(new Error("User device info not found"));
+    Device.findOne({ user: receiverId }).then((receiver) => {
+      console.log(receiver);
+      if (!receiver)
+        return rejectionFunc(new Error("Receiver device info not found"));
       const payload = {
         notification: {
           title: title,
           body: body,
         },
-        token: device.fcmToken,
+        token: receiver.fcmToken,
       };
       admin
         .messaging()
@@ -27,6 +28,7 @@ function sendNotificaion(senderId, receiverId, body, title) {
             sender: senderId,
             receiver: receiverId,
             message: body,
+            title: title,
           })
             .then(() => {
               console.log("sent");

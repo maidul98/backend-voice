@@ -47,7 +47,7 @@ router.post(
         req.user._id,
         post.user._id,
         req.body.body,
-        `${post.user.username} commented on your post`
+        `${req.user.username} commented on your post`
       );
       res.send(populated_comment);
     } catch (err) {

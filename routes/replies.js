@@ -6,6 +6,7 @@ const Comment = mongoose.model("Comment");
 const Reply = mongoose.model("Reply");
 const Post = mongoose.model("Post");
 const User = mongoose.model("User");
+const notificaionModule = require("../modules/notificaions");
 
 router.post(
   "/new/:id",
@@ -41,6 +42,13 @@ router.post(
         select:
           "-hash -salt -email -resetPasswordExpires -resetPasswordToken -suspended",
       });
+
+      notificaionModule.sendNotificaion(
+        req.user._id,
+        parent.user._id,
+        req.body.body,
+        `${req.user.username} replied to your comment`
+      );
 
       res.send(fully_populated);
     } catch (err) {

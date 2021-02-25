@@ -43,12 +43,16 @@ router.post(
         })
         .populate("votes");
 
-      await notificaionModule.sendNotificaion(
-        req.user._id,
-        post.user._id,
-        req.body.body,
-        `${req.user.username} commented on your post`
-      );
+      notificaionModule
+        .sendNotificaion(
+          req.user._id,
+          post.user._id,
+          req.body.body,
+          `${req.user.username} commented on your post`
+        )
+        .catch((error) => {
+          console.log(error);
+        });
       res.send(populated_comment);
     } catch (err) {
       if (err.name != undefined && err.name == "ValidationError") {
